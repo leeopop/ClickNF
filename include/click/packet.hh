@@ -1880,7 +1880,7 @@ Packet::shared() const
 #elif HAVE_DPDK_PACKET
     const struct rte_mbuf *m = mbuf();
     while (m) {
-	if (RTE_MBUF_INDIRECT(m) || rte_mbuf_refcnt_read(m) > 1)
+	if (RTE_MBUF_CLONED(m) || rte_mbuf_refcnt_read(m) > 1)
 	    return true;
 	m = m->next;
     }

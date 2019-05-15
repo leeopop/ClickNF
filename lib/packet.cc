@@ -902,7 +902,7 @@ Packet::expensive_uniqueify(int32_t extra_headroom, int32_t extra_tailroom,
 
 	// Copy remaining data
 //	if (ni && extra_headroom) {
-//	    assert(RTE_MBUF_INDIRECT(ni));
+//	    assert(RTE_MBUF_CLONED(ni));
 //	    struct rte_mbuf *nd = rte_mbuf_from_indirect(ni);
 //	    src = (extra_headroom > 0 ? src+len : rte_pktmbuf_mtod(nd, char *));
 //	    dst = (extra_headroom > 0 ? rte_pktmbuf_mtod(ni, char *) : dst+len);
