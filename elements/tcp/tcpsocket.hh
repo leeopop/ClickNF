@@ -31,6 +31,7 @@
 #include "tcpstate.hh"
 #include <bits/socket.h>
 #include <stdarg.h>
+#include <fcntl.h>
 
 
 #if HAVE_DPDK
