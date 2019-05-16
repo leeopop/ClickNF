@@ -9,3 +9,4 @@ installch
 stamp-h
 *.log
 bin/
+autom4te.cache/
