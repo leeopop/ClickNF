@@ -1,0 +1,11 @@
+# vscode related files
+.vscode/
+
+# autoconf related files
+**/*config.mk
+*.status
+Makefile
+installch
+stamp-h
+*.log
+bin/
