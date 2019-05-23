@@ -91,6 +91,7 @@ TCPAckOptionsEncap::max_oplen(TCPState *s)
 Packet *
 TCPAckOptionsEncap::smaction(Packet *q)
 {
+	DO_MICROBENCH();
 	TCPState *s = TCP_STATE_ANNO(q);
 	click_assert(s);
 
