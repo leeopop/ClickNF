@@ -1098,10 +1098,12 @@ DPDK::rx_batch()
 		else
 			t.rx_pkts.push_back(p);
 	}
-	
+	{
+	DO_MICROBENCH_WITH_NAME_INTERVAL("DPDK RX to output batch", 100000);	
 #if HAVE_BATCH
 	output(0).push(head);
 #endif
+	}
 
 	// Increase RX counter
 	t.rx_count += rx_count;

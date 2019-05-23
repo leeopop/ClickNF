@@ -2,7 +2,7 @@
 #ifndef CLICK_ARGS_HH
 #define CLICK_ARGS_HH
 
-//#define ENABLE_MICROBENCH
+#define ENABLE_MICROBENCH
 #ifdef ENABLE_MICROBENCH
 #include <R/microbench.hpp>
 #endif
