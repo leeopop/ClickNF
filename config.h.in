@@ -2,6 +2,27 @@
 #ifndef CLICK_CONFIG_H
 #define CLICK_CONFIG_H
 
+#define ENABLE_MICROBENCH
+#ifdef ENABLE_MICROBENCH
+#include <R/microbench.hpp>
+#endif
+
+#ifndef DO_MICROBENCH
+#define DO_MICROBENCH()
+#endif
+
+#ifndef DO_MICROBENCH_WITH_INTERVAL
+#define DO_MICROBENCH_WITH_INTERVAL(interval)
+#endif
+
+#ifndef DO_MICROBENCH_WITH_NAME
+#define DO_MICROBENCH_WITH_NAME(name)
+#endif
+
+#ifndef DO_MICROBENCH_WITH_NAME_INTERVAL
+#define DO_MICROBENCH_WITH_NAME_INTERVAL(name, interval)
+#endif
+
 /* Define to 1 if type `char' is unsigned and you are not using gcc.  */
 #ifndef __CHAR_UNSIGNED__
 # undef __CHAR_UNSIGNED__
