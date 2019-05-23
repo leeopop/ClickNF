@@ -438,8 +438,8 @@ DPDK::initialize(ErrorHandler *errh)
 		return errh->error("Callback function registration failed");
 
 	// Delay
-	click_chatter("%s: delaying start by 5s", class_name());
-	rte_delay_ms(5000);
+	click_chatter("%s: delaying start by 1s", class_name());
+	rte_delay_ms(1000);
 
 	// TX/RX queue setup
 	for (unsigned i = 0; i < _nthreads; ++i) {
