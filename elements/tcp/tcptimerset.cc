@@ -84,6 +84,8 @@ TCPTimerSet::TCPTimerSet() : _idx(0), _size(0)
 void
 TCPTimerSet::run_timers(RouterThread *thread, Master *master)
 {
+//Avg cycle: 40.690000 at [TCPTIMER run_timers]
+//DO_MICROBENCH_WITH_NAME_INTERVAL("TCPTIMER run_timers", 10000);
 #if CLICK_LINUXMODULE
 	if (_task == 0)
 		_task = current;
@@ -147,6 +149,8 @@ TCPTimerSet::run_timers(RouterThread *thread, Master *master)
 void
 TCPTimerSet::schedule_at_steady(TCPTimer *t, Timestamp when_steady)
 {
+//Avg cycle: 111.677200 at [TCPTIMER schedule_at_steady]
+//DO_MICROBENCH_WITH_NAME_INTERVAL("TCPTIMER schedule_at_steady", 10000);
 	click_assert(t);
 
 	// If timer is scheduled, remove it from timing wheel
