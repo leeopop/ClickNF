@@ -2,27 +2,6 @@
 #ifndef CLICK_ARGS_HH
 #define CLICK_ARGS_HH
 
-#define ENABLE_MICROBENCH
-#ifdef ENABLE_MICROBENCH
-#include <R/microbench.hpp>
-#endif
-
-#ifndef DO_MICROBENCH
-#define DO_MICROBENCH()
-#endif
-
-#ifndef DO_MICROBENCH_WITH_INTERVAL
-#define DO_MICROBENCH_WITH_INTERVAL(interval)
-#endif
-
-#ifndef DO_MICROBENCH_WITH_NAME
-#define DO_MICROBENCH_WITH_NAME(name)
-#endif
-
-#ifndef DO_MICROBENCH_WITH_NAME_INTERVAL
-#define DO_MICROBENCH_WITH_NAME_INTERVAL(name, interval)
-#endif
-
 #include <click/type_traits.hh>
 #include <click/vector.hh>
 #include <click/string.hh>
