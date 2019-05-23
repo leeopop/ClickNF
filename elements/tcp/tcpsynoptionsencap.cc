@@ -37,7 +37,8 @@ TCPSynOptionsEncap::TCPSynOptionsEncap()
 Packet *
 TCPSynOptionsEncap::smaction(Packet *q)
 {
-	DO_MICROBENCH();
+	// Result: this module is not called often.
+	// DO_MICROBENCH();
 	TCPState *s = TCP_STATE_ANNO(q);
 	click_assert(s);
 

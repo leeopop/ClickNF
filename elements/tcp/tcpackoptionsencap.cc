@@ -91,7 +91,8 @@ TCPAckOptionsEncap::max_oplen(TCPState *s)
 Packet *
 TCPAckOptionsEncap::smaction(Packet *q)
 {
-	DO_MICROBENCH();
+	// Benchmark record: Avg cycle: 114.939600 for client, Avg cycle: 35.399600 for server.
+	DO_MICROBENCH_WITH_INTERVAL(500000);
 	TCPState *s = TCP_STATE_ANNO(q);
 	click_assert(s);
 
