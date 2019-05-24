@@ -51,6 +51,7 @@ SetTimestamp::configure(Vector<String> &conf, ErrorHandler *errh)
 Packet *
 SetTimestamp::smaction(Packet *p)
 {
+	DO_MICROBENCH();
     if (_action == ACT_NOW){
 	if (_steady)
 	    p->timestamp_anno().assign_now_steady();
