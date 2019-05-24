@@ -65,6 +65,7 @@ TCPIPEncap::configure(Vector<String> &conf, ErrorHandler *errh)
 Packet *
 TCPIPEncap::smaction(Packet *q)
 {
+	DO_MICROBENCH();
 	TCPState *s = TCP_STATE_ANNO(q);
 	click_assert(s);
 
