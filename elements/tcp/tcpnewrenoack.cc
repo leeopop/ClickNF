@@ -45,7 +45,7 @@ TCPNewRenoAck::TCPNewRenoAck()
 Packet *
 TCPNewRenoAck::smaction(Packet *p)
 {
-	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPNewRenoAck::smaction, all", 10000);
+	//DO_MICROBENCH_WITH_NAME_INTERVAL("TCPNewRenoAck::smaction, all", 10000);
 	if (TCP_ACKED_ANNO(p))
 		p = handle_ack(p);
 	else
