@@ -92,7 +92,7 @@ Packet *
 TCPAckOptionsEncap::smaction(Packet *q)
 {
 	// Benchmark record: Avg cycle: 114.939600 for client, Avg cycle: 35.399600 for server.
-	DO_MICROBENCH_WITH_NAME_INTERVAL(__func__, 500000);
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPAckOptionsEncap::smaction", 500000);
 	TCPState *s = TCP_STATE_ANNO(q);
 	click_assert(s);
 
