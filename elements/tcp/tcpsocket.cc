@@ -67,6 +67,7 @@ TCPSocket::configure(Vector<String> &, ErrorHandler *errh)
 int
 TCPSocket::socket(int pid, int domain, int type, int protocol)
 {
+	DO_MICROBENCH();
 #if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
@@ -129,6 +130,7 @@ TCPSocket::socket(int pid, int domain, int type, int protocol)
 int
 TCPSocket::fcntl(int pid, int sockfd, int cmd)
 {
+	DO_MICROBENCH();
 	// Check if pid exists
 	if (unlikely(!TCPInfo::pid_valid(pid))) {
 		errno = EINVAL;
@@ -156,6 +158,7 @@ TCPSocket::fcntl(int pid, int sockfd, int cmd)
 int
 TCPSocket::set_task(int pid, int sockfd, BlockingTask * t)
 {
+	DO_MICROBENCH();
 	// Check if pid exists
 	if (unlikely(!TCPInfo::pid_valid(pid))) {
 		errno = EINVAL;
@@ -179,7 +182,7 @@ TCPSocket::set_task(int pid, int sockfd, BlockingTask * t)
 int
 TCPSocket::fcntl(int pid, int sockfd, int cmd, int arg)
 {
-	
+	DO_MICROBENCH();
 	// Check if pid exists
 	if (unlikely(!TCPInfo::pid_valid(pid))) {
 		errno = EINVAL;
@@ -207,6 +210,7 @@ TCPSocket::fcntl(int pid, int sockfd, int cmd, int arg)
 int
 TCPSocket::setsockopt(int pid, int sockfd, int level, int optname, const void *optval, socklen_t optlen)
 {
+	DO_MICROBENCH();
 #if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
@@ -297,6 +301,7 @@ TCPSocket::setsockopt(int pid, int sockfd, int level, int optname, const void *o
 int
 TCPSocket::getsockopt(int pid, int sockfd, int level, int optname, const void *optval, socklen_t optlen)
 {
+	DO_MICROBENCH();
 #if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
@@ -378,6 +383,7 @@ TCPSocket::getsockopt(int pid, int sockfd, int level, int optname, const void *o
 uint32_t
 TCPSocket::rss_hash(IPFlowID flow)
 {
+	DO_MICROBENCH();
 	// Values are stored in host byte order
 	union rte_thash_tuple tuple;
 
@@ -394,6 +400,7 @@ TCPSocket::rss_hash(IPFlowID flow)
 int
 TCPSocket::rss_sport(IPFlowID flow)
 {
+	DO_MICROBENCH();
 	// Values are stored in host byte order
 	union rte_thash_tuple tuple;
 
@@ -457,6 +464,7 @@ TCPSocket::rss_sport(IPFlowID flow)
 int
 TCPSocket::bind(int pid, int sockfd, IPAddress &addr, uint16_t &port)
 {
+	DO_MICROBENCH();
 #if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
@@ -498,6 +506,7 @@ TCPSocket::bind(int pid, int sockfd, IPAddress &addr, uint16_t &port)
 int
 TCPSocket::__bind(TCPState *s, IPAddress &addr, uint16_t &port, bool bind_address_no_port)
 {
+	DO_MICROBENCH();
 	// Check if socket is already bound to an address/port
 	if (unlikely(s->bound())) {
 		errno = EINVAL;
@@ -560,6 +569,7 @@ TCPSocket::__bind(TCPState *s, IPAddress &addr, uint16_t &port, bool bind_addres
 int
 TCPSocket::listen(int pid, int sockfd, int backlog)
 {
+	DO_MICROBENCH();
 #if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
@@ -614,6 +624,7 @@ TCPSocket::listen(int pid, int sockfd, int backlog)
 int
 TCPSocket::accept(int pid, int sockfd, IPAddress &addr, uint16_t &port)
 {
+	DO_MICROBENCH();
 #if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
@@ -717,6 +728,7 @@ TCPSocket::accept(int pid, int sockfd, IPAddress &addr, uint16_t &port)
 int
 TCPSocket::connect(int pid, int sockfd, IPAddress daddr, uint16_t dport)
 {
+	DO_MICROBENCH();
 #if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
@@ -884,6 +896,7 @@ TCPSocket::connect(int pid, int sockfd, IPAddress daddr, uint16_t dport)
 int
 TCPSocket::send(int pid, int sockfd, const char *buffer, size_t length)
 {
+	DO_MICROBENCH();
 #if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
@@ -1045,6 +1058,7 @@ TCPSocket::send(int pid, int sockfd, const char *buffer, size_t length)
 int
 TCPSocket::push(int pid, int sockfd, Packet *p)
 {
+	DO_MICROBENCH();
 #if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
@@ -1154,6 +1168,7 @@ TCPSocket::push(int pid, int sockfd, Packet *p)
 int
 TCPSocket::recv(int pid, int sockfd, char *buffer, size_t length)
 {
+	DO_MICROBENCH();
 #if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
@@ -1304,6 +1319,7 @@ TCPSocket::recv(int pid, int sockfd, char *buffer, size_t length)
 Packet *
 TCPSocket::pull(int pid, int sockfd, int npkts)
 {
+	DO_MICROBENCH();
 #if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
@@ -1455,6 +1471,7 @@ TCPSocket::pull(int pid, int sockfd, int npkts)
 int
 TCPSocket::fsync(int pid, int sockfd)
 {
+	DO_MICROBENCH();
 #if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
@@ -1540,6 +1557,7 @@ TCPSocket::fsync(int pid, int sockfd)
 int
 TCPSocket::close(int pid, int sockfd)
 {
+	DO_MICROBENCH();
 #if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
@@ -1809,6 +1827,7 @@ TCPSocket::close(int pid, int sockfd)
 int
 TCPSocket::poll(int pid, struct pollfd *fds, size_t nfds, int timeout)
 {
+	DO_MICROBENCH();
 # if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
@@ -1974,6 +1993,7 @@ TCPSocket::poll(int pid, struct pollfd *fds, size_t nfds, int timeout)
 int 
 TCPSocket::epoll_create(int pid, int size)
 {
+	DO_MICROBENCH();
 # if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
@@ -2003,6 +2023,7 @@ TCPSocket::epoll_create(int pid, int size)
 int 
 TCPSocket::epoll_ctl(int pid, int epfd, int op, int sockfd, struct epoll_event *event)
 {
+	DO_MICROBENCH();
 # if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
@@ -2230,6 +2251,7 @@ TCPSocket::epoll_ctl(int pid, int epfd, int op, int sockfd, struct epoll_event *
 int
 TCPSocket::epoll_wait(int pid, int epfd, struct epoll_event *events, int maxevents, int timeout)
 {
+	DO_MICROBENCH();
 # if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
@@ -2349,6 +2371,7 @@ TCPSocket::epoll_wait(int pid, int epfd, struct epoll_event *events, int maxeven
 int 
 TCPSocket::epoll_close(int pid, int epfd)
 {
+	DO_MICROBENCH();
 # if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
@@ -2399,6 +2422,7 @@ int
 TCPSocket::h_socket(int, String& s, Element *e, 
                                const Handler *, ErrorHandler *errh)
 {
+	DO_MICROBENCH();
 	TCPSocket *t = static_cast<TCPSocket *>(e);
 
 	Vector<String> conf;
@@ -2437,6 +2461,7 @@ int
 TCPSocket::h_bind(int, String& s, Element *e, 
                                const Handler *, ErrorHandler* errh)
 {
+	DO_MICROBENCH();
 	TCPSocket *t = static_cast<TCPSocket *>(e);
 
 	Vector<String> conf;
@@ -2473,6 +2498,7 @@ int
 TCPSocket::h_listen(int, String& s, Element *e, 
                                const Handler *, ErrorHandler* errh)
 {
+	DO_MICROBENCH();
 	TCPSocket *t = static_cast<TCPSocket *>(e);
 
 	Vector<String> conf;
@@ -2507,6 +2533,7 @@ int
 TCPSocket::h_accept(int, String& s, Element *e, 
                                const Handler *, ErrorHandler* errh)
 {
+	DO_MICROBENCH();
 	TCPSocket *t = static_cast<TCPSocket *>(e);
 
 	Vector<String> conf;
@@ -2541,6 +2568,7 @@ int
 TCPSocket::h_connect(int, String& s, Element *e, 
                                const Handler *, ErrorHandler* errh)
 {
+	DO_MICROBENCH();
 	TCPSocket *t = static_cast<TCPSocket *>(e);
 
 	Vector<String> conf;
@@ -2579,6 +2607,7 @@ int
 TCPSocket::h_close(int, String& s, Element *e, 
                                const Handler *, ErrorHandler* errh)
 {
+	DO_MICROBENCH();
 	TCPSocket *t = reinterpret_cast<TCPSocket *>(e);
 
 	Vector<String> conf;
@@ -2609,6 +2638,7 @@ int
 TCPSocket::h_fsync(int, String& s, Element *e, 
                                const Handler *, ErrorHandler* errh)
 {
+	DO_MICROBENCH();
 	TCPSocket *t = static_cast<TCPSocket *>(e);
 
 	Vector<String> conf;
@@ -2639,6 +2669,7 @@ int
 TCPSocket::h_send(int, String& s, Element *e, 
                                const Handler *, ErrorHandler* errh)
 {
+	DO_MICROBENCH();
 	TCPSocket *t = static_cast<TCPSocket *>(e);
 
 	const char *nl = find(s.begin(), s.end(), '\n');
@@ -2678,6 +2709,7 @@ int
 TCPSocket::h_recv(int, String& s, Element *e, 
                                const Handler *, ErrorHandler* errh)
 {
+	DO_MICROBENCH();
 	TCPSocket *t = static_cast<TCPSocket *>(e);
 
 	const char *nl = find(s.begin(), s.end(), '\n');
