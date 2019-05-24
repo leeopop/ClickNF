@@ -39,6 +39,7 @@ TCPProcessRst::TCPProcessRst()
 Packet *
 TCPProcessRst::smaction(Packet *p)
 {
+	DO_MICROBENCH_WITH_NAME("TCPProcessRst::smaction");
 	TCPState *s = TCP_STATE_ANNO(p);
 //	const click_ip *ip = p->ip_header();
 	const click_tcp *th = p->tcp_header();

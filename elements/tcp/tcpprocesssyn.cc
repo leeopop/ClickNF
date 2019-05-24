@@ -40,6 +40,7 @@ TCPProcessSyn::TCPProcessSyn()
 Packet *
 TCPProcessSyn::smaction(Packet *p)
 {
+	DO_MICROBENCH_WITH_NAME("TCPProcessSyn::smaction");
 	TCPState *s = TCP_STATE_ANNO(p);
 //	const click_ip *ip = p->ip_header();
 	const click_tcp *th = p->tcp_header();
