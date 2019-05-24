@@ -41,7 +41,9 @@ TCPRateControl::TCPRateControl()
 
 void
 TCPRateControl::push(int, Packet *p)
-{  
+{
+	// Benchmark record: Avg cycle:  for client, Avg cycle:  for server.
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPRateControl::push", 500000);
 	TCPState *s = TCP_STATE_ANNO(p);
 	click_assert(s);
 
