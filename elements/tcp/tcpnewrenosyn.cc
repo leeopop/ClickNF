@@ -41,7 +41,8 @@ TCPNewRenoSyn::TCPNewRenoSyn()
 Packet *
 TCPNewRenoSyn::smaction(Packet *p)
 {
-	DO_MICROBENCH();
+	// Benchmark record: No measurement.
+	//DO_MICROBENCH();
 	TCPState *s = TCP_STATE_ANNO(p); 
 	click_assert(s && TCP_SYN(p));
 
