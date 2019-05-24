@@ -1058,7 +1058,8 @@ TCPSocket::send(int pid, int sockfd, const char *buffer, size_t length)
 int
 TCPSocket::push(int pid, int sockfd, Packet *p)
 {
-	DO_MICROBENCH();
+	// Benchmark record: Avg cycle: 99990.746800 for client.
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPSocket::pull, push", 10000);
 #if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
@@ -1319,7 +1320,8 @@ TCPSocket::recv(int pid, int sockfd, char *buffer, size_t length)
 Packet *
 TCPSocket::pull(int pid, int sockfd, int npkts)
 {
-	DO_MICROBENCH();
+	// Benchmark record: Avg cycle: 19842.212800 for server.
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPSocket::pull, total", 100000);
 #if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
