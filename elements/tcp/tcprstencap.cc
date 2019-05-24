@@ -37,6 +37,7 @@ TCPRstEncap::TCPRstEncap()
 Packet *
 TCPRstEncap::smaction(Packet *q)
 {
+	// Result: Not actively invoked
 	DO_MICROBENCH();
 	TCPState *s = TCP_STATE_ANNO(q);
 	click_assert(s);
