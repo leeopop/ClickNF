@@ -1059,7 +1059,7 @@ int
 TCPSocket::push(int pid, int sockfd, Packet *p)
 {
 	// Benchmark record: Avg cycle: 99990.746800 for client.
-	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPSocket::pull, push", 10000);
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPSocket::push, total", 10000);
 #if CLICK_STATS >= 2
 	click_cycles_t start_cycles = click_get_cycles();
 	click_cycles_t delta = 0;
@@ -1120,7 +1120,11 @@ TCPSocket::push(int pid, int sockfd, Packet *p)
 	delta += (click_get_cycles() - start_cycles);
 #endif
 	// Check if there is enough space left for the message
-	int ret = s->wait_event(TCP_WAIT_TXQ_HALF_EMPTY);
+	int ret;
+	{
+		DO_MICROBENCH_WITH_NAME_INTERVAL("TCPSocket::push, wait for queue empty", 10000);
+		ret = s->wait_event(TCP_WAIT_TXQ_HALF_EMPTY);
+	}
 #if CLICK_STATS >= 2
 	start_cycles = click_get_cycles();
 #endif
@@ -1378,6 +1382,7 @@ TCPSocket::pull(int pid, int sockfd, int npkts)
 	case TCP_ESTABLISHED:
 	case TCP_FIN_WAIT1:
 	case TCP_FIN_WAIT2: {
+		DO_MICROBENCH_WITH_NAME_INTERVAL("TCPSocket::pull, wait for more packets", 10000);
 		// "If insufficient incoming segments are queued to satisfy the
 		//  request, queue the request.  If there is no queue space to
 		//  remember the RECEIVE, respond with "error:  insufficient
