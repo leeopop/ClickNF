@@ -40,6 +40,7 @@ TCPResetter::TCPResetter()
 Packet *
 TCPResetter::smaction(Packet *p)
 {
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPResetter::smaction", 500000);
 	TCPState *s = TCP_STATE_ANNO(p);
 
 	// Header pointers
