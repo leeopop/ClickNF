@@ -36,6 +36,7 @@ TCPFinEncap::TCPFinEncap()
 Packet *
 TCPFinEncap::smaction(Packet *q)
 {
+	DO_MICROBENCHMARK();
 	TCPState *s = TCP_STATE_ANNO(q);
 	click_assert(s);
 

@@ -37,6 +37,7 @@ TCPRstEncap::TCPRstEncap()
 Packet *
 TCPRstEncap::smaction(Packet *q)
 {
+	DO_MICRIBENCHMARK();
 	TCPState *s = TCP_STATE_ANNO(q);
 	click_assert(s);
 
