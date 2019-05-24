@@ -51,6 +51,7 @@ SetTimestamp::configure(Vector<String> &conf, ErrorHandler *errh)
 Packet *
 SetTimestamp::smaction(Packet *p)
 {
+	// Benchmark record: No measurement.
 	DO_MICROBENCH();
     if (_action == ACT_NOW){
 	if (_steady)

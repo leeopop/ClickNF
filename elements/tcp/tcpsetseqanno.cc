@@ -39,6 +39,7 @@ TCPSetSeqAnno::TCPSetSeqAnno()
 Packet *
 TCPSetSeqAnno::smaction(Packet *p)
 {
+	//DO_MICROBENCH();	
 	const click_tcp *th = reinterpret_cast<const click_tcp *>(p->data());
 
 	SET_TCP_SEQ_ANNO(p, TCP_SEQ(th));

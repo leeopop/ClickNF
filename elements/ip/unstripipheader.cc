@@ -31,6 +31,7 @@ UnstripIPHeader::~UnstripIPHeader()
 Packet *
 UnstripIPHeader::simple_action(Packet *p)
 {
+    //DO_MICROBENCH();
     assert(p->network_header());
     ptrdiff_t offset = p->network_header() - p->data();
     if (offset < 0)

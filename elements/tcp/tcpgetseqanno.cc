@@ -37,6 +37,7 @@ TCPGetSeqAnno::TCPGetSeqAnno()
 Packet *
 TCPGetSeqAnno::smaction(Packet *q)
 {
+	//DO_MICROBENCH();
 	WritablePacket *p = q->uniqueify();
 
 	click_tcp *th = reinterpret_cast<click_tcp *>(p->data());

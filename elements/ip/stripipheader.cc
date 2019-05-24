@@ -31,6 +31,7 @@ StripIPHeader::~StripIPHeader()
 Packet *
 StripIPHeader::simple_action(Packet *p)
 {
+    //DO_MICROBENCH();
     p->pull(p->transport_header_offset());
     return p;
 }
