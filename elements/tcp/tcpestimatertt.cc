@@ -41,6 +41,7 @@ TCPEstimateRTT::TCPEstimateRTT()
 Packet *
 TCPEstimateRTT::smaction(Packet *p)
 {
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPEstimateRTT::smaction", 10000);
 	TCPState *s = TCP_STATE_ANNO(p);
 	click_assert(s);
 
