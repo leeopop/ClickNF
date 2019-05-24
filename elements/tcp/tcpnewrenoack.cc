@@ -45,6 +45,7 @@ TCPNewRenoAck::TCPNewRenoAck()
 Packet *
 TCPNewRenoAck::smaction(Packet *p)
 {
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPNewRenoAck::smaction, all", 10000);
 	if (TCP_ACKED_ANNO(p))
 		p = handle_ack(p);
 	else
@@ -56,6 +57,7 @@ TCPNewRenoAck::smaction(Packet *p)
 inline Packet *
 TCPNewRenoAck::handle_ack(Packet *p)
 {
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPNewRenoAck::smaction, handle_ack", 10000);
 	TCPState *s = TCP_STATE_ANNO(p); 
 	click_assert(s);
 	
@@ -248,6 +250,7 @@ TCPNewRenoAck::handle_ack(Packet *p)
 inline Packet *
 TCPNewRenoAck::handle_old(Packet *p)
 {
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPNewRenoAck::smaction, handle_old", 10000);
 	TCPState *s = TCP_STATE_ANNO(p);
 	click_assert(s);
 
