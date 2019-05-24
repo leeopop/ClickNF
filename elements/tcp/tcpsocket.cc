@@ -1382,7 +1382,7 @@ TCPSocket::pull(int pid, int sockfd, int npkts)
 	case TCP_ESTABLISHED:
 	case TCP_FIN_WAIT1:
 	case TCP_FIN_WAIT2: {
-		DO_MICROBENCH_WITH_NAME_INTERVAL("TCPSocket::pull, wait for more packets", 10000);
+		DO_MICROBENCH_WITH_NAME_INTERVAL("TCPSocket::pull, wait for more packets", 100000);
 		// "If insufficient incoming segments are queued to satisfy the
 		//  request, queue the request.  If there is no queue space to
 		//  remember the RECEIVE, respond with "error:  insufficient
