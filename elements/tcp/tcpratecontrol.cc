@@ -42,7 +42,8 @@ TCPRateControl::TCPRateControl()
 void
 TCPRateControl::push(int, Packet *p)
 {
-	// Benchmark record: Avg cycle:  for client, Avg cycle:  for server.
+	// XXX TODO This benchmark statement seems to causing unexpected performance degradation.
+	// Benchmark record: Avg cycle: 1633.155288 for client, Avg cycle: 309.751608  for server.
 	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPRateControl::push", 500000);
 	TCPState *s = TCP_STATE_ANNO(p);
 	click_assert(s);
