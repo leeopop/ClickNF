@@ -41,7 +41,8 @@ TCPEstimateRTT::TCPEstimateRTT()
 Packet *
 TCPEstimateRTT::smaction(Packet *p)
 {
-	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPEstimateRTT::smaction", 10000);
+	// Benchmark record: Avg cycle: 33.878000 for client, Avg cycle: 45.393600 for server.
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPEstimateRTT::smaction", 500000);
 	TCPState *s = TCP_STATE_ANNO(p);
 	click_assert(s);
 
