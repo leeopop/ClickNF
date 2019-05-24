@@ -47,7 +47,7 @@ TCPNewRenoAck::smaction(Packet *p)
 {
 	//Client: Handle Ack, Server: Handle Old
 	// Benchmark record: Avg cycle: 46.641200 for client, Avg cycle: 40.110800 for server.
-	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPNewRenoAck::smaction, all", 10000);
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPNewRenoAck::smaction, all", 500000);
 	if (TCP_ACKED_ANNO(p))
 		p = handle_ack(p);
 	else
