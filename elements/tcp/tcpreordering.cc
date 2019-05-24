@@ -40,6 +40,8 @@ TCPReordering::TCPReordering()
 void
 TCPReordering::push(int, Packet *p)
 {
+	// Benchmark record: Avg cycle:  for client, Avg cycle:  for server.
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPReordering::push", 500000);
 	TCPState *s = TCP_STATE_ANNO(p);
 //	const click_ip *ip = p->ip_header();
 	const click_tcp *th = p->tcp_header();
