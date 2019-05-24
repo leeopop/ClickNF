@@ -40,7 +40,7 @@ TCPProcessTxt::TCPProcessTxt()
 Packet *
 TCPProcessTxt::smaction(Packet *p)
 {
-	// Benchmark record: Avg cycle:  for client, Avg cycle:  for server.
+	// Benchmark record: Avg cycle: 24.157992 for client, Avg cycle: 212.173216 for server.
 	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPProcessTxt::smaction", 500000);
 	TCPState *s = TCP_STATE_ANNO(p);
 	const click_ip *ip = p->ip_header();
