@@ -41,6 +41,7 @@ TCPProcessFin::TCPProcessFin()
 Packet *
 TCPProcessFin::smaction(Packet *p)
 {
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPProcessFin::smaction", 500000);
 	TCPState *s = TCP_STATE_ANNO(p);
 	const click_tcp *th = p->tcp_header();
 	click_assert(s && th);
