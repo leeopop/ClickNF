@@ -52,6 +52,7 @@ TCPEnqueue4RTX::configure(Vector<String> &conf, ErrorHandler *errh)
 Packet *
 TCPEnqueue4RTX::smaction(Packet *p)
 {
+	// Benchmark record: Avg cycle: 119.030488 for client, Avg cycle: 25.559336 for server.
 	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPEnqueue4RTX::smaction", 500000);
 	TCPState *s = TCP_STATE_ANNO(p);
 	click_assert(s);
