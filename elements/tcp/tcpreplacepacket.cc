@@ -45,6 +45,8 @@ TCPReplacePacket::smaction(Packet *p)
 	bool ackreq = TCP_ACK_FLAG_ANNO(p);
 	// If packet is shared, kill it and allocate a new one
 	if (p->shared()) {
+		// Benchmark record: Avg cycle: 152.305600 for server.
+		DO_MICROBENCH_WITH_NAME_INTERVAL("TCPReplacePacket::smaction, shared", 500000);
 		// Kill packet
 		p->kill();
 
@@ -60,19 +62,21 @@ TCPReplacePacket::smaction(Packet *p)
 
 		SET_TCP_STATE_ANNO(q, (uint64_t)s);
 		return q;
+	} else {
+		// Benchmark record: Avg cycle: 57.573200 for client.
+		DO_MICROBENCH_WITH_NAME_INTERVAL("TCPReplacePacket::smaction, non-shared", 500000);
+		// Otherwise, reuse the same packet
+		p->reset();
+		SET_TCP_STATE_ANNO(p, (uint64_t)s);
+		
+		// Load timestamp and ACK REQUIRED annotations
+		p->set_timestamp_anno(now);
+		
+		if(ackreq)
+			SET_TCP_ACK_FLAG_ANNO(p);
+
+		return p;
 	}
-
-	// Otherwise, reuse the same packet
-	p->reset();
-	SET_TCP_STATE_ANNO(p, (uint64_t)s);
-	
-	// Load timestamp and ACK REQUIRED annotations
-	p->set_timestamp_anno(now);
-	
-	if(ackreq)
-		SET_TCP_ACK_FLAG_ANNO(p);
-
-	return p;
 }
 
 void

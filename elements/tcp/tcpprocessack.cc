@@ -41,6 +41,8 @@ TCPProcessAck::TCPProcessAck()
 Packet *
 TCPProcessAck::smaction(Packet *p)
 {
+	// Benchmark record: Avg cycle: 552.045200 for client, Avg cycle: 24.671200 for server.
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPProcessAck::smaction", 500000);
 	TCPState *s = TCP_STATE_ANNO(p);
 //	const click_ip *ip = p->ip_header();
 	const click_tcp *th = p->tcp_header();

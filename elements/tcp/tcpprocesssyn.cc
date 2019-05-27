@@ -40,6 +40,8 @@ TCPProcessSyn::TCPProcessSyn()
 Packet *
 TCPProcessSyn::smaction(Packet *p)
 {
+	// Benchmark record: Avg cycle: 24.665200 for both.
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPProcessSyn::smaction", 500000);
 	TCPState *s = TCP_STATE_ANNO(p);
 //	const click_ip *ip = p->ip_header();
 	const click_tcp *th = p->tcp_header();

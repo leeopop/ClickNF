@@ -44,6 +44,7 @@ TCPNewRenoRTX::TCPNewRenoRTX()
 Packet *
 TCPNewRenoRTX::smaction(Packet *p)
 {
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPNewRenoRTX::smaction", 10000);
 	TCPState *s = TCP_STATE_ANNO(p);
 	click_assert(s);
 	

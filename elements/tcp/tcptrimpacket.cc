@@ -39,6 +39,8 @@ TCPTrimPacket::TCPTrimPacket()
 Packet *
 TCPTrimPacket::smaction(Packet *p)
 {
+	// Benchmark record: Avg cycle: 25.074016 for client, Avg cycle: 24.297856 for server.
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPTrimPacket::smaction", 500000);
 	TCPState *s = TCP_STATE_ANNO(p);
 	const click_ip *ip = p->ip_header();
 	const click_tcp *th = p->tcp_header();

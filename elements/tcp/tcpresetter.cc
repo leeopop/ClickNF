@@ -40,6 +40,8 @@ TCPResetter::TCPResetter()
 Packet *
 TCPResetter::smaction(Packet *p)
 {
+	// Benchmark record: No measurement
+	DO_MICROBENCH();
 	TCPState *s = TCP_STATE_ANNO(p);
 
 	// Header pointers
