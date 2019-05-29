@@ -67,16 +67,21 @@ TCPRateControl::push(int, Packet *p)
 
 	// Keep sending until empty TX queue or small window
 	while (!s->txq.empty() && s->available_tx_window() >= s->snd_mss) {
-		// Get head-of-line (HOL) packet from TX queue
-		DO_MICROBENCH_WITH_NAME_INTERVAL("TCPRateControl::push, send_loop", 100000);
-		Packet *q = s->txq.front();
-		s->txq.pop_front();
+		// Get head-of-line (HOL) packet from TX queue=
+		// Benchmark record: Avg cycle: 773.611800 for client.
+		// DO_MICROBENCH_WITH_NAME_INTERVAL("TCPRateControl::push, send_loop", 100000);
+		Packet *q;
+		{
+			DO_MICROBENCH_WITH_NAME_INTERVAL("TCPRateControl::push, pre_send_loop", 100000);
+			q = s->txq.front();
+			s->txq.pop_front();
 
-		// Get length
-		uint32_t len = q->length();
+			// Get length
+			uint32_t len = q->length();
 
-		// Send data packet
-		SET_TCP_STATE_ANNO(q, (uint64_t)s);
+			// Send data packet
+			SET_TCP_STATE_ANNO(q, (uint64_t)s);
+		}
 		output(0).push(q);
 
 		// Reacquire lock
