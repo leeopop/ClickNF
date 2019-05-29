@@ -55,6 +55,7 @@ TCPSetMssAnno::configure(Vector<String> &conf, ErrorHandler *errh)
 Packet *
 TCPSetMssAnno::smaction(Packet *p)
 {
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPSetMssAnno::smaction", 500000);
 	TCPState *s = TCP_STATE_ANNO(p);
 
 	// Set MSS annotation for TCP segmentation offloading
@@ -69,6 +70,7 @@ TCPSetMssAnno::smaction(Packet *p)
 void
 TCPSetMssAnno::push(int, Packet *p)
 {
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPSetMssAnno::push", 500000);
 	if (Packet *q = smaction(p))
 		output(0).push(q);
 }
