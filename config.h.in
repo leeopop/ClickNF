@@ -5,7 +5,6 @@
 #ifdef __cplusplus
 
 #define ENABLE_MICROBENCH
-#define PRECISE_MICROBENCH
 #ifdef ENABLE_MICROBENCH
 #define CUSTOM_PRINT_INTERVAL 10000
 #include <R/microbench.hpp>
