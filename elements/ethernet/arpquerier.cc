@@ -398,7 +398,7 @@ ARPQuerier::handle_response(Packet *p)
 void
 ARPQuerier::push(int port, Packet *p)
 {
-	DO_MICROBENCH_WITH_NAME_INTERVAL("ARPQuerier::push", 100000);
+	DO_MICROBENCH_WITH_NAME_INTERVAL("ARPQuerier::push", 500000);
     Packet* head = NULL;
     Packet* curr = p;
     Packet* prev = p;
