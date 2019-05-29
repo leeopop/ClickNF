@@ -914,7 +914,7 @@ DPDK::run_task(Task *task)
 uint16_t
 DPDK::tx_batch()
 {
-	DO_MICROBENCH_WITH_NAME_INTERVAL("DPDK::tx_batch", 500000);
+	DO_MICROBENCH_WITH_NAME_INTERVAL("DPDK::tx_batch", 10000);
 	unsigned c = click_current_cpu_id();
 	TaskData &t = _task[c];
 	uint32_t tx_count = 0;
