@@ -71,13 +71,14 @@ TCPRateControl::push(int, Packet *p)
 		// Benchmark record: Avg cycle: 773.611800 for client.
 		// DO_MICROBENCH_WITH_NAME_INTERVAL("TCPRateControl::push, send_loop", 100000);
 		Packet *q;
+		uint32_t len;
 		{
 			DO_MICROBENCH_WITH_NAME_INTERVAL("TCPRateControl::push, pre_send_loop", 100000);
 			q = s->txq.front();
 			s->txq.pop_front();
 
 			// Get length
-			uint32_t len = q->length();
+			len = q->length();
 
 			// Send data packet
 			SET_TCP_STATE_ANNO(q, (uint64_t)s);
