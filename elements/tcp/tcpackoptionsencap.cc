@@ -177,6 +177,7 @@ TCPAckOptionsEncap::smaction(Packet *q)
 void
 TCPAckOptionsEncap::push(int, Packet *p)
 {
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPAckOptionsEncap::push", 500000);
 	if (Packet *q = smaction(p))
 		output(0).push(q);
 }
