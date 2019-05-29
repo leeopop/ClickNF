@@ -110,6 +110,7 @@ TCPEnqueue4RTX::smaction(Packet *p)
 void
 TCPEnqueue4RTX::push(int, Packet *p)
 {
+	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPEnqueue4RTX::push", 500000);
 	if (Packet *q = smaction(p))
 		output(0).push(q);
 }
