@@ -56,6 +56,8 @@ TCPReordering::push(int, Packet *p)
 	//  begins at RCV.NXT.  Segments with higher begining sequence
 	//  numbers may be held for later processing."
 	if (likely(TCP_SEQ(th) == s->rcv_nxt && s->rxb.empty())) {
+		// Fastpath
+		// Benchmark record: Avg cycle: 2597.264000 for client, Avg cycle: 1040.557200 for server.
 		RESET_TCP_MS_FLAG_ANNO(p);
 		RESET_TCP_ACK_FLAG_ANNO(p);
 		output(0).push(p);

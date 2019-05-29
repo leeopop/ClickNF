@@ -68,6 +68,7 @@ TCPRateControl::push(int, Packet *p)
 	// Keep sending until empty TX queue or small window
 	while (!s->txq.empty() && s->available_tx_window() >= s->snd_mss) {
 		// Get head-of-line (HOL) packet from TX queue
+		DO_MICROBENCH_WITH_NAME_INTERVAL("TCPRateControl::push, send_loop", 100000);
 		Packet *q = s->txq.front();
 		s->txq.pop_front();
 
