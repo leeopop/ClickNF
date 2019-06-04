@@ -786,7 +786,7 @@ class Packet { public:
     };
 
     inline struct pre_arp_request* get_pre_arp_anno() {
-        return (struct pre_arp_request*)(this->anno_u8() + 48);
+        return (struct pre_arp_request*)(this->anno_u8() + 32);
     }
 
   private:
