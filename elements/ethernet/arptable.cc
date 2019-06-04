@@ -52,8 +52,8 @@ void * pre_arp_thread_main(void* arg)
 	cpu_set_t set;
 	CPU_ZERO(&set);
 	CPU_SET(6, &set);
-	pthread_setaffinity_np(ARPTable::pre_arp_worker, sizeof(cpu_set_t), &set);
 	while(rte_atomic16_read(&caller->pre_arp_worker_running) != 1) {}
+	pthread_setaffinity_np(ARPTable::pre_arp_worker, sizeof(cpu_set_t), &set);
 	rte_atomic16_inc(&caller->pre_arp_worker_running);
 	printf("Pre ARP Worker started!\n");
 	rte_mb();
