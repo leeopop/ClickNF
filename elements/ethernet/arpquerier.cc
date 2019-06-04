@@ -358,13 +358,14 @@ ARPQuerier::handle_ip(Packet *p, bool response)
 	Packet::pre_arp_request* req = p->get_pre_arp_anno();
 	EtherAddress *dst_eth = reinterpret_cast<EtherAddress *>(q->ether_header()->ether_dhost);
 	IPAddress dst_ip = q->dst_ip_anno();
-	uint16_t ret;
+	
 	int r;
-	do
 	{
-		ret = rte_atomic16_read(&req->result);
-		rte_pause();
-	} while (ret == 1);
+		DO_MICROBENCH();
+		while(1 == rte_atomic16_read(&req->result)) {
+			rte_pause();
+		}
+	}
 	rte_mb();
 retry_read_lock:
 	r = _arpt->lookup(dst_ip, dst_eth, _poll_timeout_j);
