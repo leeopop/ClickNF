@@ -34,15 +34,48 @@ ARPTable::ARPTable()
     : _entry_capacity(0), _packet_capacity(2048), _entry_packet_capacity(0), _capacity_slim_factor(2), _expire_timer(this)
 {
     _entry_count = _packet_count = _drops = 0;
+	this->pre_arp_worker_running = RTE_ATOMIC16_INIT(0);
 }
+
+struct rte_ring* ARPTable::pre_arp_jobs = 0;
+pthread_t ARPTable::pre_arp_worker = 0;
 
 ARPTable::~ARPTable()
 {
+	
+}
+
+void * pre_arp_thread_main(void* arg) 
+{
+	ARPTable* caller = (ARPTable*) arg;
+	printf("Pre ARP Worker initialized!\n");
+	cpu_set_t set;
+	CPU_ZERO(&set);
+	CPU_SET(6, &set);
+	pthread_setaffinity_np(ARPTable::pre_arp_worker, sizeof(cpu_set_t), &set);
+	while(rte_atomic16_read(&caller->pre_arp_worker_running) != 1) {}
+	rte_atomic16_inc(&caller->pre_arp_worker_running);
+	printf("Pre ARP Worker started!\n");
+	rte_mb();
+	struct rte_ring* job_queue = ARPTable::pre_arp_jobs;
+
+	void* bucket[32];
+	while(rte_atomic16_read(&caller->pre_arp_worker_running) != 3) {
+		unsigned n = rte_ring_dequeue_burst(job_queue, bucket, 32, NULL);
+		for(unsigned i=0; i<n; i++) {
+			struct ARPTable::pre_arp_request* request = (struct ARPTable::pre_arp_request*)bucket[i];
+		}
+	}
+	printf("Pre ARP Worker terminating!\n");
 }
 
 int
 ARPTable::configure(Vector<String> &conf, ErrorHandler *errh)
 {
+	ARPTable::pre_arp_jobs = rte_ring_create("pre-arp ring", 1024, 0, RING_F_SC_DEQ);
+	ARPTable::pre_arp_worker = pthread_create(&ARPTable::pre_arp_worker, NULL, pre_arp_thread_main, this);
+	rte_atomic16_inc(&this->pre_arp_worker_running);
+
     Timestamp timeout(300);
     if (Args(conf, this, errh)
 	.read("CAPACITY", _packet_capacity)
@@ -71,6 +104,14 @@ ARPTable::cleanup(CleanupStage)
 void
 ARPTable::clear()
 {
+	while(rte_atomic16_read(&this->pre_arp_worker_running) != 2) {}
+	printf("Pre ARP Worker signalled to be terminated!\n");
+	rte_atomic16_inc(&this->pre_arp_worker_running);
+	pthread_join(ARPTable::pre_arp_worker, NULL);
+	printf("Pre ARP Worker joined!\n");
+	ARPTable::pre_arp_worker = 0;
+	rte_ring_free(ARPTable::pre_arp_jobs);
+	ARPTable::pre_arp_jobs = 0;
     // Walk the arp cache table and free any stored packets and arp entries.
     for (Table::iterator it = _table.begin(); it; ) {
 	ARPEntry *ae = _table.erase(it);
