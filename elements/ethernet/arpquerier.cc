@@ -367,20 +367,20 @@ ARPQuerier::handle_ip(Packet *p, bool response)
 	
 	do
 	{
-		printf("waiting for result at arpquery\n");
+		//printf("waiting for result at arpquery\n");
 		ret = rte_atomic16_read(&req->result);
 	} while (ret == 1);
 	rte_mb();
 	if (ret == 2)
 	{
-		printf("fastpath arpquery\n");
+		//printf("fastpath arpquery\n");
 		r = req->send_arp;
 		if (r >= 0) {
 			*dst_eth = req->eth;
 		}
 		goto fast_path;
 	}
-	printf("slowpath arpquery\n");
+	//printf("slowpath arpquery\n");
 retry_read_lock:
 	r = _arpt->lookup(dst_ip, dst_eth, _poll_timeout_j);
 fast_path:
