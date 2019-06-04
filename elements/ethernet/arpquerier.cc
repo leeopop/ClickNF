@@ -358,8 +358,6 @@ ARPQuerier::handle_ip(Packet *p, bool response)
 	}
     }
 
-    
-
     // Easy case: requires only read lock
 	Packet::pre_arp_request* req = p->get_pre_arp_anno();
 	EtherAddress *dst_eth = reinterpret_cast<EtherAddress *>(q->ether_header()->ether_dhost);
@@ -376,7 +374,7 @@ ARPQuerier::handle_ip(Packet *p, bool response)
 	{
 		printf("fastpath arpquery\n");
 		r = req->send_arp;
-		if (r > 0) {
+		if (r >= 0) {
 			*dst_eth = req->eth;
 		}
 		goto fast_path;
