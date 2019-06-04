@@ -30,7 +30,7 @@
 #include <clicknet/tcp.h>
 #include "tcpipencap.hh"
 #include "tcpstate.hh"
-#include "../ethernet/arptable.hh"
+#include "../ethernet/arpquerier.hh"
 CLICK_DECLS
 
 TCPIPEncap::TCPIPEncap()
@@ -74,7 +74,7 @@ TCPIPEncap::smaction(Packet *q)
 	req->ip_addr = s->flow.daddr();
 	req->result = RTE_ATOMIC16_INIT(1);
 	rte_mb();
-	int ret = rte_ring_enqueue(ARPTable::pre_arp_jobs, q);
+	int ret = rte_ring_enqueue(ARPQuerier::pre_arp_jobs, q);
 	if(ret < 0)
 		req->result = RTE_ATOMIC16_INIT(4);
 

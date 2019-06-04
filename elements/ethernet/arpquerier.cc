@@ -34,10 +34,22 @@ CLICK_DECLS
 ARPQuerier::ARPQuerier()
     : _arpt(0), _my_arpt(false), _zero_warned(false)
 {
+	this->pre_arp_worker_running = RTE_ATOMIC16_INIT(0);
 }
+
+struct rte_ring* ARPQuerier::pre_arp_jobs = 0;
+pthread_t ARPQuerier::pre_arp_worker = 0;
 
 ARPQuerier::~ARPQuerier()
 {
+	while(rte_atomic16_read(&this->pre_arp_worker_running) != 2) {}
+	printf("Pre ARP Worker signalled to be terminated!\n");
+	rte_atomic16_inc(&this->pre_arp_worker_running);
+	pthread_join(ARPQuerier::pre_arp_worker, NULL);
+	printf("Pre ARP Worker joined!\n");
+	ARPQuerier::pre_arp_worker = 0;
+	rte_ring_free(ARPQuerier::pre_arp_jobs);
+	ARPQuerier::pre_arp_jobs = 0;
 }
 
 void *
@@ -49,6 +61,45 @@ ARPQuerier::cast(const char *name)
 	return this;
     else
 	return Element::cast(name);
+}
+
+void *ARPQuerier::pre_arp_thread_main(void *arg)
+{
+	ARPQuerier *caller = (ARPQuerier *)arg;
+	printf("Pre ARP Worker initialized!\n");
+	cpu_set_t set;
+	CPU_ZERO(&set);
+	CPU_SET(6, &set);
+	while (rte_atomic16_read(&caller->pre_arp_worker_running) != 1)
+	{
+	}
+	pthread_setaffinity_np(ARPQuerier::pre_arp_worker, sizeof(cpu_set_t), &set);
+	rte_atomic16_inc(&caller->pre_arp_worker_running);
+	printf("Pre ARP Worker started!\n");
+	rte_mb();
+	struct rte_ring *job_queue = ARPQuerier::pre_arp_jobs;
+
+	void *bucket[32];
+	while (rte_atomic16_read(&caller->pre_arp_worker_running) != 3)
+	{
+		unsigned n = rte_ring_dequeue_burst(job_queue, bucket, 32, NULL);
+		if (n > 0)
+		{
+			caller->_arpt->_lookup_lock();
+			for (unsigned i = 0; i < n; i++)
+			{
+				struct Packet *p = (struct Packet *)bucket[i];
+				struct Packet::pre_arp_request *request = p->get_pre_arp_anno();
+
+				int ret = caller->_arpt->lookup(request->ip_addr, &request->eth, caller->_poll_timeout_j);
+				request->send_arp = ret;
+				rte_mb();
+				rte_atomic16_set(&request->result, 2);
+			}
+			caller->_arpt->_lookup_unlock();
+		}
+	}
+	printf("Pre ARP Worker terminating!\n");
 }
 
 int
@@ -113,6 +164,10 @@ ARPQuerier::configure(Vector<String> &conf, ErrorHandler *errh)
     else
 	_poll_timeout_j = poll_timeout.jiffies();
 
+	rte_mb();
+	ARPQuerier::pre_arp_jobs = rte_ring_create("pre-arp ring", 1024, 0, RING_F_SC_DEQ);
+	pthread_create(&ARPQuerier::pre_arp_worker, NULL, pre_arp_thread_main, this);
+	rte_atomic16_inc(&this->pre_arp_worker_running);
     return 0;
 }
 
@@ -308,7 +363,9 @@ ARPQuerier::handle_ip(Packet *p, bool response)
     // Easy case: requires only read lock
 	Packet::pre_arp_request* req = p->get_pre_arp_anno();
 	EtherAddress *dst_eth = reinterpret_cast<EtherAddress *>(q->ether_header()->ether_dhost);
+	IPAddress dst_ip = q->dst_ip_anno();
 	uint16_t ret;
+	int r;
 	rte_mb();
 	do
 	{
@@ -318,15 +375,16 @@ ARPQuerier::handle_ip(Packet *p, bool response)
 	if (ret == 2)
 	{
 		printf("fastpath arpquery\n");
-		*dst_eth = req->eth;
-		memcpy(&q->ether_header()->ether_shost, _my_en.data(), 6);
-    	return q;
+		r = req->send_arp;
+		if (r > 0) {
+			*dst_eth = req->eth;
+		}
+		goto fast_path;
 	}
 	printf("slowpath arpquery\n");
-	IPAddress dst_ip = q->dst_ip_anno();
-	int r;
 retry_read_lock:
 	r = _arpt->lookup(dst_ip, dst_eth, _poll_timeout_j);
+fast_path:
 	if (r >= 0)
 	{
 		assert(!dst_eth->is_broadcast());

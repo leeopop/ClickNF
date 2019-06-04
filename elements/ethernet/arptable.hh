@@ -107,12 +107,15 @@ class ARPTable : public Element { public:
     void cleanup(CleanupStage) CLICK_COLD;
 
     int lookup(IPAddress ip, EtherAddress *eth, uint32_t poll_timeout_j);
+    int _lookup_without_lock(IPAddress ip, EtherAddress *eth, uint32_t poll_timeout_j);
+    void _lookup_lock();
+    void _lookup_unlock();
+
     EtherAddress lookup(IPAddress ip);
     IPAddress reverse_lookup(const EtherAddress &eth);
     int insert(IPAddress ip, const EtherAddress &en, Packet **head = 0);
     int append_query(IPAddress ip, Packet *p);
     void clear();
-    static void * pre_arp_thread_main(void* arg);
 
     uint32_t capacity() const {
 	return _packet_capacity;
@@ -205,11 +208,7 @@ class ARPTable : public Element { public:
 	    if (_num_polls_since_reply < 255)
 		++_num_polls_since_reply;
 	}
-    };
-    
-    static struct rte_ring* pre_arp_jobs;
-    static pthread_t pre_arp_worker;
-    rte_atomic16_t pre_arp_worker_running; // 0 for init, 1 for start, 2 for running, 3 for terminate
+    };    
 
   private:
     ReadWriteLock _lock;
@@ -235,9 +234,7 @@ class ARPTable : public Element { public:
 };
 
 inline int
-ARPTable::lookup(IPAddress ip, EtherAddress *eth, uint32_t poll_timeout_j)
-{
-    _lock.acquire_read();
+ARPTable::_lookup_without_lock(IPAddress ip, EtherAddress *eth, uint32_t poll_timeout_j) {
     int r = -1;
     if (Table::iterator it = _table.find(ip)) {
 	click_jiffies_t now = 0;
@@ -250,10 +247,26 @@ ARPTable::lookup(IPAddress ip, EtherAddress *eth, uint32_t poll_timeout_j)
 			&& it->allow_poll(now)) {
 			it->mark_poll(now);
 			r = 1;
-	} else
-		r = 0;
-	}
+        } else
+            r = 0;
+        }
     }
+    return r;
+}
+inline void
+ARPTable::_lookup_lock() {
+    _lock.acquire_read();
+}
+inline void
+ARPTable::_lookup_unlock() {
+    _lock.release_read();
+}
+
+inline int
+ARPTable::lookup(IPAddress ip, EtherAddress *eth, uint32_t poll_timeout_j)
+{
+    _lock.acquire_read();
+    int r = ARPTable::_lookup_without_lock(ip, eth, poll_timeout_j);
     _lock.release_read();
     return r;
 }

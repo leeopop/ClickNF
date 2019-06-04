@@ -5,6 +5,7 @@
 #include <click/ipaddress.hh>
 #include <click/sync.hh>
 #include <click/timer.hh>
+#include <click/packet.hh>
 #include "arptable.hh"
 CLICK_DECLS
 
@@ -192,6 +193,11 @@ class ARPQuerier : public Element { public:
     void take_state(Element *e, ErrorHandler *errh);
 
     void push(int port, Packet *p) final;
+
+    static struct rte_ring* pre_arp_jobs;
+    static pthread_t pre_arp_worker;
+    rte_atomic16_t pre_arp_worker_running; // 0 for init, 1 for start, 2 for running, 3 for terminate
+    static void * pre_arp_thread_main(void* arg);
 
   private:
 

@@ -782,6 +782,7 @@ class Packet { public:
         IPAddress ip_addr;
         // 1 for request, 2 for done, 3 for done but has no result, 4 for enque failed
         EtherAddress eth;
+        int send_arp;
     };
 
     inline struct pre_arp_request* get_pre_arp_anno() {
