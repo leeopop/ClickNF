@@ -30,6 +30,7 @@
 #include <clicknet/tcp.h>
 #include "tcpipencap.hh"
 #include "tcpstate.hh"
+#include "../ethernet/arptable.hh"
 CLICK_DECLS
 
 TCPIPEncap::TCPIPEncap()
@@ -69,6 +70,11 @@ TCPIPEncap::smaction(Packet *q)
 	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPIPEncap::smaction", 500000);
 	TCPState *s = TCP_STATE_ANNO(q);
 	click_assert(s);
+	q->pre_arp_annotation.ip_addr = s->flow.daddr();
+	q->pre_arp_annotation.result = RTE_ATOMIC16_INIT(1);
+	int ret = rte_ring_enqueue(ARPTable::pre_arp_jobs, q);
+	if(ret < 0)
+		q->pre_arp_annotation.result = RTE_ATOMIC16_INIT(4);
 
 	// Make space for IP header
 	WritablePacket *p = q->push(sizeof(click_ip));
@@ -88,6 +94,7 @@ TCPIPEncap::smaction(Packet *q)
 	ip->ip_ttl = _ttl;
 	ip->ip_p   = IP_PROTO_TCP;
 	ip->ip_sum = 0;
+
 	ip->ip_src = s->flow.saddr().in_addr();
 	ip->ip_dst = s->flow.daddr().in_addr();
 

@@ -45,25 +45,49 @@ ARPTable::~ARPTable()
 	
 }
 
-void * pre_arp_thread_main(void* arg) 
+void *ARPTable::pre_arp_thread_main(void *arg)
 {
-	ARPTable* caller = (ARPTable*) arg;
+	ARPTable *caller = (ARPTable *)arg;
 	printf("Pre ARP Worker initialized!\n");
 	cpu_set_t set;
 	CPU_ZERO(&set);
 	CPU_SET(6, &set);
-	while(rte_atomic16_read(&caller->pre_arp_worker_running) != 1) {}
+	while (rte_atomic16_read(&caller->pre_arp_worker_running) != 1)
+	{
+	}
 	pthread_setaffinity_np(ARPTable::pre_arp_worker, sizeof(cpu_set_t), &set);
 	rte_atomic16_inc(&caller->pre_arp_worker_running);
 	printf("Pre ARP Worker started!\n");
 	rte_mb();
-	struct rte_ring* job_queue = ARPTable::pre_arp_jobs;
+	struct rte_ring *job_queue = ARPTable::pre_arp_jobs;
 
-	void* bucket[32];
-	while(rte_atomic16_read(&caller->pre_arp_worker_running) != 3) {
+	void *bucket[32];
+	while (rte_atomic16_read(&caller->pre_arp_worker_running) != 3)
+	{
 		unsigned n = rte_ring_dequeue_burst(job_queue, bucket, 32, NULL);
-		for(unsigned i=0; i<n; i++) {
-			struct ARPTable::pre_arp_request* request = (struct ARPTable::pre_arp_request*)bucket[i];
+		if (n > 0)
+		{
+			caller->_lock.acquire_read();
+			for (unsigned i = 0; i < n; i++)
+			{
+				struct Packet *p = (struct Packet *)bucket[i];
+				struct Packet::pre_arp_request *request = &p->pre_arp_annotation;
+
+				int r = -1;
+				do {
+					if (Table::iterator it = caller->_table.find(request->ip_addr))
+					{
+						if (it->known(0, 0))
+						{
+							request->eth = it->_eth;
+							rte_atomic16_set(&request->result, 2);
+							break;
+						}
+					}
+					rte_atomic16_set(&request->result, 3);
+				}while(0);
+			}
+			caller->_lock.release_read();
 		}
 	}
 	printf("Pre ARP Worker terminating!\n");

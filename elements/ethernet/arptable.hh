@@ -112,6 +112,7 @@ class ARPTable : public Element { public:
     int insert(IPAddress ip, const EtherAddress &en, Packet **head = 0);
     int append_query(IPAddress ip, Packet *p);
     void clear();
+    static void * pre_arp_thread_main(void* arg);
 
     uint32_t capacity() const {
 	return _packet_capacity;
@@ -205,12 +206,7 @@ class ARPTable : public Element { public:
 		++_num_polls_since_reply;
 	}
     };
-    struct pre_arp_request {
-        IPAddress ip_addr;
-        rte_atomic16_t result;
-        // 1 for request, 2 for done
-        uint8_t	mac_addr[6];
-    };
+    
     static struct rte_ring* pre_arp_jobs;
     static pthread_t pre_arp_worker;
     rte_atomic16_t pre_arp_worker_running; // 0 for init, 1 for start, 2 for running, 3 for terminate

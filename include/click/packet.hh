@@ -4,6 +4,7 @@
 #include <click/ipaddress.hh>
 #include <click/glue.hh>
 #include <click/timestamp.hh>
+#include <click/etheraddress.hh>
 #if CLICK_LINUXMODULE
 # include <click/skbmgr.hh>
 #else
@@ -776,6 +777,13 @@ class Packet { public:
     inline void set_user_anno_u(int, uint32_t) CLICK_DEPRECATED;
     /** @endcond never */
 
+    struct pre_arp_request {
+        rte_atomic16_t result;
+        IPAddress ip_addr;
+        // 1 for request, 2 for done, 3 for done but has no result, 4 for enque failed
+        EtherAddress eth;
+    } pre_arp_annotation;
+
   private:
 
     // Anno must fit in sk_buff's char cb[48].
@@ -889,6 +897,8 @@ class WritablePacket : public Packet { public:
     /** @cond never */
     inline unsigned char *buffer_data() const CLICK_DEPRECATED;
     /** @endcond never */
+
+    
 
  private:
 
