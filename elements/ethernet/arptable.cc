@@ -74,17 +74,18 @@ void *ARPTable::pre_arp_thread_main(void *arg)
 				struct Packet *p = (struct Packet *)bucket[i];
 				struct Packet::pre_arp_request *request = p->get_pre_arp_anno();
 
-				int r = -1;
 				do {
 					if (Table::iterator it = caller->_table.find(request->ip_addr))
 					{
 						if (it->known(0, 0))
 						{
 							request->eth = it->_eth;
+							rte_mb();
 							rte_atomic16_set(&request->result, 2);
 							break;
 						}
 					}
+					rte_mb();
 					rte_atomic16_set(&request->result, 3);
 				}while(0);
 			}

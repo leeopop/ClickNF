@@ -73,6 +73,7 @@ TCPIPEncap::smaction(Packet *q)
 	struct Packet::pre_arp_request* req = q->get_pre_arp_anno();
 	req->ip_addr = s->flow.daddr();
 	req->result = RTE_ATOMIC16_INIT(1);
+	rte_mb();
 	int ret = rte_ring_enqueue(ARPTable::pre_arp_jobs, q);
 	if(ret < 0)
 		req->result = RTE_ATOMIC16_INIT(4);
