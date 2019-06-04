@@ -70,15 +70,14 @@ TCPIPEncap::smaction(Packet *q)
 	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPIPEncap::smaction", 500000);
 	TCPState *s = TCP_STATE_ANNO(q);
 	click_assert(s);
-	/*
+	
 	struct Packet::pre_arp_request* req = q->get_pre_arp_anno();
-	req->ip_addr = s->flow.daddr();
 	req->result = RTE_ATOMIC16_INIT(1);
 	rte_mb();
 	int ret = rte_ring_enqueue(ARPQuerier::pre_arp_jobs, q);
 	if(ret < 0)
 		req->result = RTE_ATOMIC16_INIT(4);
-		*/
+		
 
 	// Make space for IP header
 	WritablePacket *p = q->push(sizeof(click_ip));

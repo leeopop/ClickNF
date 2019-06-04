@@ -90,10 +90,6 @@ void *ARPQuerier::pre_arp_thread_main(void *arg)
 			{
 				struct Packet *p = (struct Packet *)bucket[i];
 				struct Packet::pre_arp_request *request = p->get_pre_arp_anno();
-
-				int ret = caller->_arpt->lookup(request->ip_addr, &request->eth, caller->_poll_timeout_j);
-				request->send_arp = ret;
-				rte_mb();
 				rte_atomic16_set(&request->result, 2);
 			}
 			caller->_arpt->_lookup_unlock();
@@ -364,27 +360,14 @@ ARPQuerier::handle_ip(Packet *p, bool response)
 	IPAddress dst_ip = q->dst_ip_anno();
 	uint16_t ret;
 	int r;
-	
 	do
 	{
-		//printf("waiting for result at arpquery\n");
 		ret = rte_atomic16_read(&req->result);
+		rte_pause();
 	} while (ret == 1);
 	rte_mb();
-	if (ret == 2)
-	{
-		//printf("fastpath arpquery\n");
-		r = req->send_arp;
-		if (r >= 0) {
-			*dst_eth = req->eth;
-		}
-		rte_atomic16_set(&req->result, 4);
-		goto fast_path;
-	}
-	//printf("slowpath arpquery\n");
 retry_read_lock:
 	r = _arpt->lookup(dst_ip, dst_eth, _poll_timeout_j);
-fast_path:
 	if (r >= 0)
 	{
 		assert(!dst_eth->is_broadcast());

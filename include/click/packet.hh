@@ -779,14 +779,10 @@ class Packet { public:
 
     struct pre_arp_request {
         rte_atomic16_t result;
-        IPAddress ip_addr;
-        // 1 for request, 2 for done, 3 for done but has no result, 4 for enque failed
-        EtherAddress eth;
-        int send_arp;
     };
 
     inline struct pre_arp_request* get_pre_arp_anno() {
-        return (struct pre_arp_request*)(this->anno_u8() + 32);
+        return (struct pre_arp_request*)(this->anno_u8() + 48);
     }
 
   private:
