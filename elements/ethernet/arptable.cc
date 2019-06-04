@@ -28,6 +28,7 @@
 #include <click/router.hh>
 #include <click/error.hh>
 #include <click/glue.hh>
+#include <click/packet.hh>
 CLICK_DECLS
 
 ARPTable::ARPTable()
@@ -71,7 +72,7 @@ void *ARPTable::pre_arp_thread_main(void *arg)
 			for (unsigned i = 0; i < n; i++)
 			{
 				struct Packet *p = (struct Packet *)bucket[i];
-				struct Packet::pre_arp_request *request = &p->pre_arp_annotation;
+				struct Packet::pre_arp_request *request = p->get_pre_arp_anno();
 
 				int r = -1;
 				do {

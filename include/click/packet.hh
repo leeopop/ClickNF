@@ -418,7 +418,7 @@ class Packet { public:
     //@{
 
     enum {
-	anno_size = 48			///< Size of annotation area.
+	anno_size = 64			///< Size of annotation area.
     };
 
     /** @brief Return the timestamp annotation. */
@@ -733,7 +733,7 @@ class Packet { public:
 	addr_anno_offset = 0,
 	addr_anno_size = 16,
 	user_anno_offset = 16,
-	user_anno_size = 32,
+	user_anno_size = 48,
 	ADDR_ANNO_SIZE = addr_anno_size,
 	USER_ANNO_SIZE = user_anno_size,
 	USER_ANNO_U16_SIZE = USER_ANNO_SIZE / 2,
@@ -782,7 +782,11 @@ class Packet { public:
         IPAddress ip_addr;
         // 1 for request, 2 for done, 3 for done but has no result, 4 for enque failed
         EtherAddress eth;
-    } pre_arp_annotation;
+    };
+
+    inline struct pre_arp_request* get_pre_arp_anno() {
+        return (struct pre_arp_request*)(this->anno_u8() + 48);
+    }
 
   private:
 
@@ -1767,7 +1771,7 @@ Packet::make(struct sk_buff *skb)
 inline void
 Packet::kill()
 {
-    while (rte_atomic16_read(&this->pre_arp_annotation.result) == 1){}
+    while (rte_atomic16_read(&this->get_pre_arp_anno()->result) == 1){}
 #if CLICK_LINUXMODULE
     struct sk_buff *b = skb();
     b->next = b->prev = 0;
