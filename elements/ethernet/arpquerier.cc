@@ -303,52 +303,76 @@ ARPQuerier::handle_ip(Packet *p, bool response)
 	}
     }
 
-    IPAddress dst_ip = q->dst_ip_anno();
-    EtherAddress *dst_eth = reinterpret_cast<EtherAddress *>(q->ether_header()->ether_dhost);
-    int r;
+    
 
     // Easy case: requires only read lock
-  retry_read_lock:
-    r = _arpt->lookup(dst_ip, dst_eth, _poll_timeout_j);
-    if (r >= 0) {
-	assert(!dst_eth->is_broadcast());
-	if (r > 0)
-	    send_query_for(q, true);
-	// ... and send packet below.
-    } else if (dst_ip.addr() == 0xFFFFFFFFU || dst_ip == _my_bcast_ip) {
-	memset(dst_eth, 0xff, 6);
-	// ... and send packet below.
-    } else if (dst_ip.is_multicast()) {
-	uint8_t *dst_addr = q->ether_header()->ether_dhost;
-	dst_addr[0] = 0x01;
-	dst_addr[1] = 0x00;
-	dst_addr[2] = 0x5E;
-	uint32_t addr = ntohl(dst_ip.addr());
-	dst_addr[3] = (addr >> 16) & 0x7F;
-	dst_addr[4] = addr >> 8;
-	dst_addr[5] = addr;
-	// ... and send packet below.
-    } else {
-	// Zero or unknown address: do not send the packet.
-	if (!dst_ip) {
-	    if (!_zero_warned) {
-		click_chatter("%s: would query for 0.0.0.0; missing dest IP addr annotation?", declaration().c_str());
-		_zero_warned = true;
-	    }
-	    ++_drops;
-	    q->kill();
-	} else {
-	    r = _arpt->append_query(dst_ip, q);
-	    if (r == -EAGAIN)
-		goto retry_read_lock;
-	    if (r < 0)
-		q->kill();
-	    if (r > 0)
-		send_query_for(q, false); // q is on the ARP entry's queue
-	    // if r >= 0, do not q->kill() since it is stored in some ARP entry.
+	Packet::pre_arp_request* req = p->get_pre_arp_anno();
+	EtherAddress *dst_eth = reinterpret_cast<EtherAddress *>(q->ether_header()->ether_dhost);
+	uint16_t ret;
+	do
+	{
+		ret = rte_atomic16_read(&req->result);
+	} while (ret == 1);
+	if (ret == 2)
+	{
+		*dst_eth = req->eth;
+		memcpy(&q->ether_header()->ether_shost, _my_en.data(), 6);
+    	return q;
 	}
-	return NULL;
-    }
+	IPAddress dst_ip = q->dst_ip_anno();
+	int r;
+retry_read_lock:
+	r = _arpt->lookup(dst_ip, dst_eth, _poll_timeout_j);
+	if (r >= 0)
+	{
+		assert(!dst_eth->is_broadcast());
+		if (r > 0)
+			send_query_for(q, true);
+		// ... and send packet below.
+	}
+	else if (dst_ip.addr() == 0xFFFFFFFFU || dst_ip == _my_bcast_ip)
+	{
+		memset(dst_eth, 0xff, 6);
+		// ... and send packet below.
+	}
+	else if (dst_ip.is_multicast())
+	{
+		uint8_t *dst_addr = q->ether_header()->ether_dhost;
+		dst_addr[0] = 0x01;
+		dst_addr[1] = 0x00;
+		dst_addr[2] = 0x5E;
+		uint32_t addr = ntohl(dst_ip.addr());
+		dst_addr[3] = (addr >> 16) & 0x7F;
+		dst_addr[4] = addr >> 8;
+		dst_addr[5] = addr;
+		// ... and send packet below.
+	}
+	else
+	{
+		// Zero or unknown address: do not send the packet.
+		if (!dst_ip)
+		{
+			if (!_zero_warned)
+			{
+				click_chatter("%s: would query for 0.0.0.0; missing dest IP addr annotation?", declaration().c_str());
+				_zero_warned = true;
+			}
+			++_drops;
+			q->kill();
+		}
+		else
+		{
+			r = _arpt->append_query(dst_ip, q);
+			if (r == -EAGAIN)
+				goto retry_read_lock;
+			if (r < 0)
+				q->kill();
+			if (r > 0)
+				send_query_for(q, false); // q is on the ARP entry's queue
+			// if r >= 0, do not q->kill() since it is stored in some ARP entry.
+		}
+		return NULL;
+	}
 
     // It's time to emit the packet with our Ethernet address as source.  (Set
     // the source address immediately before send in case the user changes the
