@@ -32,6 +32,7 @@
 #include "tcpstate.hh"
 #include "tcpinfo.hh"
 #include "../userlevel/dpdk.hh"
+#include "../ethernet/arpquerier.hh"
 
 CLICK_DECLS
 
@@ -42,6 +43,12 @@ TCPFlowLookup::TCPFlowLookup()
 Packet *
 TCPFlowLookup::smaction(Packet *p)
 {
+	struct Packet::pre_arp_request* req = p->get_pre_arp_anno();
+	req->result = RTE_ATOMIC16_INIT(1);
+	rte_mb();
+	int ret = rte_ring_enqueue(ARPQuerier::pre_arp_jobs, p);
+	if(ret < 0)
+		req->result = RTE_ATOMIC16_INIT(4);
 //	const click_ip *ip = p->ip_header();
 //	const click_tcp *th = p->tcp_header();
     TCPState *s;
