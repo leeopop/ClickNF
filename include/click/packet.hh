@@ -1771,7 +1771,10 @@ Packet::make(struct sk_buff *skb)
 inline void
 Packet::kill()
 {
-    while (rte_atomic16_read(&this->get_pre_arp_anno()->result) == 1){}
+    while (rte_atomic16_read(&this->get_pre_arp_anno()->result) == 1){
+        rte_pause();
+        printf("waiting for kill\n");
+    }
 #if CLICK_LINUXMODULE
     struct sk_buff *b = skb();
     b->next = b->prev = 0;
