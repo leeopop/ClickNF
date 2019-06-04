@@ -309,16 +309,20 @@ ARPQuerier::handle_ip(Packet *p, bool response)
 	Packet::pre_arp_request* req = p->get_pre_arp_anno();
 	EtherAddress *dst_eth = reinterpret_cast<EtherAddress *>(q->ether_header()->ether_dhost);
 	uint16_t ret;
+	rte_mb();
 	do
 	{
+		printf("waiting for result at arpquery\n");
 		ret = rte_atomic16_read(&req->result);
 	} while (ret == 1);
 	if (ret == 2)
 	{
+		printf("fastpath arpquery\n");
 		*dst_eth = req->eth;
 		memcpy(&q->ether_header()->ether_shost, _my_en.data(), 6);
     	return q;
 	}
+	printf("slowpath arpquery\n");
 	IPAddress dst_ip = q->dst_ip_anno();
 	int r;
 retry_read_lock:
