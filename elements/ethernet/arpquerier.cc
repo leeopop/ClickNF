@@ -364,7 +364,7 @@ ARPQuerier::handle_ip(Packet *p, bool response)
 	IPAddress dst_ip = q->dst_ip_anno();
 	uint16_t ret;
 	int r;
-	rte_mb();
+	
 	do
 	{
 		printf("waiting for result at arpquery\n");
@@ -372,6 +372,7 @@ ARPQuerier::handle_ip(Packet *p, bool response)
 	} while (ret == 1);
 	if (ret == 2)
 	{
+		rte_mb();
 		printf("fastpath arpquery\n");
 		r = req->send_arp;
 		if (r >= 0) {
