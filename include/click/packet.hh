@@ -1767,6 +1767,7 @@ Packet::make(struct sk_buff *skb)
 inline void
 Packet::kill()
 {
+    while (rte_atomic16_read(&this->pre_arp_annotation.result) == 1){}
 #if CLICK_LINUXMODULE
     struct sk_buff *b = skb();
     b->next = b->prev = 0;
