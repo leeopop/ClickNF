@@ -73,7 +73,7 @@ int
 ARPTable::configure(Vector<String> &conf, ErrorHandler *errh)
 {
 	ARPTable::pre_arp_jobs = rte_ring_create("pre-arp ring", 1024, 0, RING_F_SC_DEQ);
-	ARPTable::pre_arp_worker = pthread_create(&ARPTable::pre_arp_worker, NULL, pre_arp_thread_main, this);
+	pthread_create(&ARPTable::pre_arp_worker, NULL, pre_arp_thread_main, this);
 	rte_atomic16_inc(&this->pre_arp_worker_running);
 
     Timestamp timeout(300);
