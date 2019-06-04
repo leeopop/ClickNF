@@ -1019,6 +1019,7 @@ DPDK::rx_batch()
 #endif
 	for (uint16_t i = 0; i < rx_count; i++) {
 		WritablePacket *p = Packet::mbuf2packet(rx_mbuf[i]);
+		p->get_pre_arp_anno()->result = RTE_ATOMIC16_INIT(0);
 # if HAVE_DPDK_PACKET && HAVE_BATCH 
 		// Prefetch annotations and first data cahce line of the next packet 
 		// if we have batched output (might not be helpful if we don't have batched output)
