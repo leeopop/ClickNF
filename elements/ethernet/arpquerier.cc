@@ -378,6 +378,7 @@ ARPQuerier::handle_ip(Packet *p, bool response)
 		if (r >= 0) {
 			*dst_eth = req->eth;
 		}
+		rte_atomic16_set(&req->result, 4);
 		goto fast_path;
 	}
 	//printf("slowpath arpquery\n");

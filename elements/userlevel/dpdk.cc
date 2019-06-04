@@ -1030,7 +1030,7 @@ DPDK::rx_batch()
                 }
 # endif
 		p->get_pre_arp_anno()->result = RTE_ATOMIC16_INIT(0);
-		printf("reset result: %d\n", p->get_pre_arp_anno()->result.cnt);
+		//printf("reset result: %d\n", p->get_pre_arp_anno()->result.cnt);
 		rte_mb();
 		// Set packet timestamp annotation
 		if (_rx_timestamp_anno) {
