@@ -1,9 +1,9 @@
 require(library test-tcp-layer2.click)
 
-define($DEV0 iface, $ADDR0 10.0.20.2, $MAC0 bb:bb:bb:bb:bb:bb)
+define($DEV0 0, $ADDR0 10.0.20.2, $MAC0 3c:fd:fe:9e:5c:88)
 AddressInfo($DEV0 $ADDR0 $MAC0);
 
-tcp_layer :: TCPLayer(ADDRS $ADDR0, VERBOSE false)
+tcp_layer :: TCPLayer(ADDRS $ADDR0, VERBOSE false);
 tcp_bulks :: TCPBulkServer($ADDR0, 9000, BUFLEN 2048, VERBOSE false);
 
 tcp_bulks[0] -> [1]tcp_layer;
