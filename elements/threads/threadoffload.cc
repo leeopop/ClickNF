@@ -69,6 +69,7 @@ void *ThreadOffload::worker()
             Packet* p = (Packet*)ptr;
             ThreadOffload::Annotation* anno = get_anno(p);
             rte_atomic16_exchange(&anno->state, 1);
+            rte_wmb();
             rte_pktmbuf_release_ref2(p->mbuf());
         } 
         if (n == 0 && stop_signal == 1)
@@ -101,6 +102,7 @@ Packet *ThreadOffload::simple_action(Packet *p)
     get_anno(p)->created_at = rte_rdtsc();
     rte_pktmbuf_acquire_ref2(p->mbuf());
     SET_TCP_HAS_OFFLOAD_ANNO(p, 1);
+    rte_wmb();
     while(rte_ring_sp_enqueue(job_queue, (void*)p) <0);
 
     return p;

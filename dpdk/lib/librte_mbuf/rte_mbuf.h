@@ -1029,7 +1029,11 @@ rte_mbuf_raw_free(struct rte_mbuf *m)
 	RTE_ASSERT(m->nb_segs == 1);
 	__rte_mbuf_sanity_check(m, 0);
 
-	while(rte_atomic16_read(&m->refcnt2_atomic) != 0);
+	if(rte_atomic16_read(&m->refcnt2_atomic) != 0) {
+		rte_rmb();
+		while(rte_atomic16_read(&m->refcnt2_atomic) != 0);
+	}
+	
 	rte_mempool_put(m->pool, m);
 }
 
