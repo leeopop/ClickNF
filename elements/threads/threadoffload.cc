@@ -35,21 +35,23 @@ ThreadOffload::~ThreadOffload()
 {
     if (job_queue == 0)
     {
-        printf("No worker thread found, exiting.\n");
+        printf("[ThreadOffload] No worker thread found, exiting.\n");
         return;
     }
-    printf("Push termination marker\n");
+    printf("[ThreadOffload] Push termination marker\n");
     while(rte_ring_mp_enqueue(job_queue, 0) <0);
 
-    printf("Try join...\n");
+    rte_mb();
+
+    printf("[ThreadOffload] Try join...\n");
     pthread_join(_worker_thread, 0);
-    printf("Join finished.\n");
+    printf("[ThreadOffload] Join finished.\n");
     rte_ring_free(job_queue);
 }
 
 void *ThreadOffload::worker()
 {
-    printf("Worker thread started!\n");
+    printf("[ThreadOffload] Worker thread started!\n");
     cpu_set_t set;
     CPU_ZERO(&set);
     CPU_SET(_core_id, &set);
@@ -70,7 +72,7 @@ void *ThreadOffload::worker()
         }
     }
 break_loop:
-    printf("Worker thread ended!\n");
+    printf("[ThreadOffload] Worker thread ended!\n");
 }
 
 int ThreadOffload::configure(Vector<String> &conf, ErrorHandler *errh)

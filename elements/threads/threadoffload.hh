@@ -26,7 +26,8 @@ public:
     ~ThreadOffload();
 
     const char *class_name() const { return "ThreadOffload"; }
-    const char *port_count() const { return PORTS_0_0; }
+    const char *port_count() const { return "x/0"; }
+    const char *processing() const { return PUSH; }
 
     int configure(Vector<String> &, ErrorHandler *) CLICK_COLD;
 
