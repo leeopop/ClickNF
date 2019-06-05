@@ -41,7 +41,7 @@ void
 TCPReordering::push(int, Packet *p)
 {
 	// Benchmark record: Avg cycle: 2373.917800 for client, Avg cycle: 857.358616 for server.
-	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPReordering::push", 500000);
+	//DO_MICROBENCH_WITH_NAME_INTERVAL("TCPReordering::push", 500000);
 	TCPState *s = TCP_STATE_ANNO(p);
 //	const click_ip *ip = p->ip_header();
 	const click_tcp *th = p->tcp_header();

@@ -70,7 +70,7 @@ TCPSetMssAnno::smaction(Packet *p)
 void
 TCPSetMssAnno::push(int, Packet *p)
 {
-	DO_MICROBENCH_WITH_NAME_INTERVAL("TCPSetMssAnno::push", 500000);
+	//DO_MICROBENCH_WITH_NAME_INTERVAL("TCPSetMssAnno::push", 500000);
 	if (Packet *q = smaction(p))
 		output(0).push(q);
 }

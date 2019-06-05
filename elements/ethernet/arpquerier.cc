@@ -398,14 +398,14 @@ ARPQuerier::handle_response(Packet *p)
 void
 ARPQuerier::push(int port, Packet *p)
 {
-	DO_MICROBENCH_WITH_NAME_INTERVAL("ARPQuerier::push", 500000);
+	//DO_MICROBENCH_WITH_NAME_INTERVAL("ARPQuerier::push", 500000);
     Packet* head = NULL;
     Packet* curr = p;
     Packet* prev = p;
     Packet* next = NULL;
 #if HAVE_BATCH
     while (curr){
-	DO_MICROBENCH_WITH_NAME_INTERVAL("ARPQuerier::inside_loop", 500000);
+	//DO_MICROBENCH_WITH_NAME_INTERVAL("ARPQuerier::inside_loop", 500000);
 	next = curr->next();
 	curr->set_next(NULL);
 #endif

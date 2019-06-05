@@ -1115,7 +1115,7 @@ DPDK::rx_batch()
 void
 DPDK::push(int, Packet *p)
 {
-	DO_MICROBENCH_WITH_NAME_INTERVAL("DPDK::push", 500000);
+	//DO_MICROBENCH_WITH_NAME_INTERVAL("DPDK::push", 500000);
 	if (unlikely(!_active)) {
 		p->kill();
 		return;
