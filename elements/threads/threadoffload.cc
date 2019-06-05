@@ -87,7 +87,7 @@ int ThreadOffload::configure(Vector<String> &conf, ErrorHandler *errh)
         return -1;
 
     int socket_id = rte_lcore_to_socket_id(_core_id);
-    job_queue = rte_ring_create("threadoffload_jq", 1024, socket_id, RING_F_SC_DEQ);
+    job_queue = rte_ring_create("threadoffload_jq", 8192, socket_id, RING_F_SC_DEQ);
     rte_mb();
     int ret = pthread_create(&_worker_thread, NULL, (void *(*)(void *))&ThreadOffload::worker, this);
     assert(ret == 0);
