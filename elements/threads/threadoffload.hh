@@ -27,13 +27,12 @@ public:
     ~ThreadOffload();
 
     const char *class_name() const { return "ThreadOffload"; }
-    const char *port_count() const { return "0-/0"; }
-    const char *processing() const { return PUSH; }
+    //const char *port_count() const { return "1/1"; }
+    //const char *processing() const { return PUSH; }
 
     int configure(Vector<String> &, ErrorHandler *) CLICK_COLD;
 
-    // TODO: currently, noop
-    void push(int port, Packet *p);
+    Packet *simple_action(Packet *p);
 
 private:
     pthread_t _worker_thread;

@@ -105,13 +105,15 @@ int ThreadOffload::configure(Vector<String> &conf, ErrorHandler *errh)
     return 0;
 }
 
-void ThreadOffload::push(int port, Packet *p)
+Packet *ThreadOffload::simple_action(Packet *p)
 {
     DO_MICROBENCH_WITH_INTERVAL(500000);
     get_anno(p)->created_at = rte_rdtsc();
     rte_mbuf_refcnt_update(p->mbuf(), 1);
     SET_TCP_HAS_OFFLOAD_ANNO(p, 1);
     while(rte_ring_sp_enqueue(job_queue, (void*)p) <0);
+
+    return p;
 }
 
 CLICK_ENDDECLS
