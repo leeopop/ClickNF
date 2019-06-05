@@ -42,8 +42,7 @@ TCPFlowLookup::TCPFlowLookup()
 Packet *
 TCPFlowLookup::smaction(Packet *p)
 {
-	Packet* cloned = p->clone();
-	output(1).push(cloned);
+	output(1).push(p);
 //	const click_ip *ip = p->ip_header();
 //	const click_tcp *th = p->tcp_header();
     TCPState *s;

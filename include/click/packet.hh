@@ -417,7 +417,7 @@ class Packet { public:
     //@{
 
     enum {
-	anno_size = 64			///< Size of annotation area.
+	anno_size = 48			///< Size of annotation area.
     };
 
     /** @brief Return the timestamp annotation. */

@@ -71,7 +71,7 @@ void *ThreadOffload::worker()
             }
 
             Packet* packet = (Packet*)ptr;
-            packet->kill();
+            rte_pktmbuf_free(packet->mbuf());
         }
     }
 break_loop:
@@ -97,6 +97,7 @@ int ThreadOffload::configure(Vector<String> &conf, ErrorHandler *errh)
 
 void ThreadOffload::push(int port, Packet *p)
 {
+    rte_mbuf_refcnt_update(p->mbuf(), 1);
     rte_ring_mp_enqueue(job_queue, (void*)p);
 }
 
