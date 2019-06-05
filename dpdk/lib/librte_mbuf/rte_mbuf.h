@@ -553,6 +553,16 @@ struct rte_mbuf {
 		uint64_t udata64; /**< Allow 8-byte userdata on 32-bit */
 	};
 
+	/**
+	 * Wait for do-not-free request.
+	 * We do not have to consider about data races.
+	 */
+	RTE_STD_C11
+	union {
+		rte_atomic16_t refcnt2_atomic; /**< Atomically accessed refcnt */
+		uint16_t refcnt2;              /**< Non-atomically accessed refcnt */
+	};
+
 	struct rte_mempool *pool; /**< Pool from which mbuf was allocated. */
 	struct rte_mbuf *next;    /**< Next segment of scattered packet. */
 
@@ -1017,7 +1027,9 @@ rte_mbuf_raw_free(struct rte_mbuf *m)
 	RTE_ASSERT(m->next == NULL);
 	RTE_ASSERT(m->nb_segs == 1);
 	__rte_mbuf_sanity_check(m, 0);
-	rte_mempool_put(m->pool, m);
+
+	if(rte_atomic16_dec_and_test(&m->refcnt2_atomic) == 0)
+		rte_mempool_put(m->pool, m);
 }
 
 /* compat with older versions */
@@ -1685,6 +1697,23 @@ static inline void rte_pktmbuf_free(struct rte_mbuf *m)
 		m_next = m->next;
 		rte_pktmbuf_free_seg(m);
 		m = m_next;
+	}
+}
+
+static inline void rte_pktmbuf_acquire_ref2(struct rte_mbuf *m)
+{
+	if (m != NULL) {
+		__rte_mbuf_sanity_check(m, 1);
+		rte_atomic16_inc(&m->refcnt2_atomic);
+	}
+}
+
+static inline void rte_pktmbuf_release_ref2(struct rte_mbuf *m)
+{
+	if (m != NULL) {
+		__rte_mbuf_sanity_check(m, 1);
+		if(rte_atomic16_dec_and_test(&m->refcnt2_atomic) == 0)
+			rte_mempool_put(m->pool, m);
 	}
 }
 

@@ -79,6 +79,7 @@ struct rte_kni_mbuf {
 
 	/* fields on second cache line */
 	char pad3[8] __attribute__((__aligned__(RTE_CACHE_LINE_MIN_SIZE)));
+	char pad1_ref2[2];
 	void *pool;
 	void *next;
 };

@@ -1,3 +1,0 @@
-[submodule "dpdk"]
-	path = dpdk
-	url = https://gitlab.kaist.ac.kr/3rdparty/dpdk.git

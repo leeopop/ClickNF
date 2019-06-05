@@ -103,6 +103,7 @@ rte_pktmbuf_init(struct rte_mempool *mp,
 	m->nb_segs = 1;
 	m->port = MBUF_INVALID_PORT;
 	rte_mbuf_refcnt_set(m, 1);
+	rte_atomic16_set(&m->refcnt2_atomic, 1);
 	m->next = NULL;
 }
 
