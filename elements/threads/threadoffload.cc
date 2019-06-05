@@ -50,6 +50,10 @@ ThreadOffload::~ThreadOffload()
 void *ThreadOffload::worker()
 {
     printf("Worker thread started!\n");
+    cpu_set_t set;
+    CPU_ZERO(&set);
+    CPU_SET(_core_id, &set);
+    pthread_setaffinity_np(_worker_thread, sizeof(cpu_set_t), &set);
 #define BURST_SIZE 32
     void *burst[BURST_SIZE];
     while (true)
