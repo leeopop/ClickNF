@@ -38,6 +38,7 @@ private:
     pthread_t _worker_thread;
     int _core_id;
     struct rte_ring* job_queue;
+    volatile uint16_t stop_signal;
     void* worker();
 };
 

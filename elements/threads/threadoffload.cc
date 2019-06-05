@@ -29,6 +29,7 @@ ThreadOffload::ThreadOffload()
 {
     assert(sizeof(ThreadOffload::Annotation) <= TCP_OFFLOAD_ANNO_SIZE);
     job_queue = 0;
+    stop_signal = RTE_ATOMIC16_INIT(0);
 }
 
 ThreadOffload::~ThreadOffload()
@@ -39,7 +40,7 @@ ThreadOffload::~ThreadOffload()
         return;
     }
     printf("[ThreadOffload] Push termination marker\n");
-    while(rte_ring_mp_enqueue(job_queue, 0) <0);
+    rte_atomic16_exchange(&stop_signal, 1);
 
     rte_mb();
 
@@ -64,15 +65,11 @@ void *ThreadOffload::worker()
         for (int i = 0; i < n; ++i)
         {
             void *ptr = burst[i];
-            if (ptr == 0)
-            {
-                assert(i + 1 == n);
-                goto break_loop;
-            }
-
             Packet* packet = (Packet*)ptr;
             rte_pktmbuf_free(packet->mbuf());
-        }
+        } 
+        if (n == 0 && stop_signal == 1)
+            goto break_loop;
     }
 break_loop:
     printf("[ThreadOffload] Worker thread ended!\n");
@@ -87,7 +84,7 @@ int ThreadOffload::configure(Vector<String> &conf, ErrorHandler *errh)
         return -1;
 
     int socket_id = rte_lcore_to_socket_id(_core_id);
-    job_queue = rte_ring_create("threadoffload_jq", 8192, socket_id, RING_F_SC_DEQ);
+    job_queue = rte_ring_create("threadoffload_jq", 8192, socket_id, RING_F_SC_DEQ | RING_F_SP_ENQ);
     rte_mb();
     int ret = pthread_create(&_worker_thread, NULL, (void *(*)(void *))&ThreadOffload::worker, this);
     assert(ret == 0);
@@ -99,7 +96,7 @@ void ThreadOffload::push(int port, Packet *p)
 {
     DO_MICROBENCH_WITH_INTERVAL(500000);
     rte_mbuf_refcnt_update(p->mbuf(), 1);
-    while(rte_ring_mp_enqueue(job_queue, (void*)p) <0);
+    while(rte_ring_sp_enqueue(job_queue, (void*)p) <0);
 }
 
 CLICK_ENDDECLS

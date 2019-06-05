@@ -42,7 +42,7 @@ TCPFlowLookup::TCPFlowLookup()
 Packet *
 TCPFlowLookup::smaction(Packet *p)
 {
-	DO_MICROBENCH_WITH_INTERVAL(500000);
+	//DO_MICROBENCH_WITH_INTERVAL(500000);
 	output(1).push(p);
 //	const click_ip *ip = p->ip_header();
 //	const click_tcp *th = p->tcp_header();
