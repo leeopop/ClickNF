@@ -745,6 +745,7 @@ Packet::clone()
 //    rte_prefetch0((char *)p->anno() + CLICK_CACHE_LINE_SIZE);
 
     rte_memcpy(p->aanno(), aanno(), sizeof(AllAnno));
+	SET_TCP_HAS_OFFLOAD_ANNO(p, 0);
     return p;
 #elif CLICK_USERLEVEL || CLICK_BSDMODULE || CLICK_MINIOS
 # if CLICK_BSDMODULE
