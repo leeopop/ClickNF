@@ -66,7 +66,7 @@ void *ThreadOffload::worker()
         {
             void *ptr = burst[i];
             Packet* packet = (Packet*)ptr;
-            //rte_pktmbuf_free(packet->mbuf());
+            rte_pktmbuf_free(packet->mbuf());
         } 
         if (n == 0 && stop_signal == 1)
             goto break_loop;
@@ -95,8 +95,9 @@ int ThreadOffload::configure(Vector<String> &conf, ErrorHandler *errh)
 void ThreadOffload::push(int port, Packet *p)
 {
     DO_MICROBENCH_WITH_INTERVAL(500000);
-    //rte_mbuf_refcnt_update(p->mbuf(), 1);
-    while(rte_ring_sp_enqueue(job_queue, (void*)p) <0);
+    rte_mbuf_refcnt_update(p->mbuf(), 1);
+    if (rte_ring_sp_enqueue(job_queue, (void*)p) <0)
+        rte_mbuf_refcnt_update(p->mbuf(), -1);
 }
 
 CLICK_ENDDECLS
