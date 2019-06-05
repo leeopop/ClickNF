@@ -971,6 +971,7 @@ rte_mbuf_sanity_check(const struct rte_mbuf *m, int is_header);
 
 #define MBUF_RAW_ALLOC_CHECK(m) do {				\
 	RTE_ASSERT(rte_mbuf_refcnt_read(m) == 1);		\
+	RTE_ASSERT(rte_atomic16_read(&(m)->refcnt2_atomic) == 0);		\
 	RTE_ASSERT((m)->next == NULL);				\
 	RTE_ASSERT((m)->nb_segs == 1);				\
 	__rte_mbuf_sanity_check(m, 0);				\
