@@ -1028,7 +1028,7 @@ rte_mbuf_raw_free(struct rte_mbuf *m)
 	RTE_ASSERT(m->nb_segs == 1);
 	__rte_mbuf_sanity_check(m, 0);
 
-	if(rte_atomic16_dec_and_test(&m->refcnt2_atomic) == 0)
+	if(rte_atomic16_sub_return(&m->refcnt2_atomic, 1) == 0)
 		rte_mempool_put(m->pool, m);
 }
 
@@ -1712,7 +1712,7 @@ static inline void rte_pktmbuf_release_ref2(struct rte_mbuf *m)
 {
 	if (m != NULL) {
 		__rte_mbuf_sanity_check(m, 1);
-		if(rte_atomic16_dec_and_test(&m->refcnt2_atomic) == 0)
+		if(rte_atomic16_sub_return(&m->refcnt2_atomic, 1) == 0)
 			rte_mempool_put(m->pool, m);
 	}
 }
