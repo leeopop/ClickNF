@@ -45,6 +45,13 @@ Packet* ThreadOffloadSync::simple_action(Packet *p)
     if(TCP_HAS_OFFLOAD_ANNO(p) == 1) {
         DO_MICROBENCH_WITH_INTERVAL(500000);
         while(anno->state == 0);
+        total_diff += rte_rdtsc() - anno->created_at;
+        sum_count += 1;
+        if (sum_count == 500000) {
+            printf("average offloading time: %lf\n", (double)total_diff / (double)sum_count);
+            sum_count = 0;
+            total_diff = 0;
+        }
     }
     return p;
 }

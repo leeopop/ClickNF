@@ -18,6 +18,9 @@ public:
     int configure(Vector<String> &, ErrorHandler *) CLICK_COLD;
 
     Packet *simple_action(Packet *p);
+private:
+    uint64_t total_diff;
+    uint64_t sum_count;
 };
 
 CLICK_ENDDECLS

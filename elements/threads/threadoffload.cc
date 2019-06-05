@@ -60,8 +60,6 @@ void *ThreadOffload::worker()
     pthread_setaffinity_np(_worker_thread, sizeof(cpu_set_t), &set);
 #define BURST_SIZE 32
     void *burst[BURST_SIZE];
-    uint64_t total_diff = 0;
-    uint64_t sum_count = 0;
     while (true)
     {
         int n = rte_ring_sc_dequeue_burst(job_queue, burst, BURST_SIZE, NULL);
@@ -70,19 +68,11 @@ void *ThreadOffload::worker()
             void *ptr = burst[i];
             Packet* p = (Packet*)ptr;
             ThreadOffload::Annotation* anno = get_anno(p);
-            uint64_t diff = rte_rdtsc_precise() - anno->created_at;
-            total_diff += diff;
-            sum_count += 1;
             rte_atomic16_exchange(&anno->state, 1);
             rte_pktmbuf_free(p->mbuf());
         } 
         if (n == 0 && stop_signal == 1)
             goto break_loop;
-        if (sum_count == 500000) {
-            printf("average offloading time: %lf\n", (double)total_diff / (double)sum_count);
-            sum_count = 0;
-            total_diff = 0;
-        }
     }
 break_loop:
     printf("[ThreadOffload] Worker thread ended!\n");
@@ -108,7 +98,7 @@ int ThreadOffload::configure(Vector<String> &conf, ErrorHandler *errh)
 Packet *ThreadOffload::simple_action(Packet *p)
 {
     DO_MICROBENCH_WITH_INTERVAL(500000);
-    get_anno(p)->created_at = rte_rdtsc_precise();
+    get_anno(p)->created_at = rte_rdtsc();
     rte_mbuf_refcnt_update(p->mbuf(), 1);
     SET_TCP_HAS_OFFLOAD_ANNO(p, 1);
     while(rte_ring_sp_enqueue(job_queue, (void*)p) <0);
