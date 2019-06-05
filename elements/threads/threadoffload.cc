@@ -71,6 +71,7 @@ void *ThreadOffload::worker()
             Packet* p = (Packet*)ptr;
             uint64_t diff = rte_rdtsc() - get_anno(p)->created_at;
             total_diff += diff;
+            sum_count += 1;
             rte_pktmbuf_free(p->mbuf());
         } 
         if (n == 0 && stop_signal == 1)
