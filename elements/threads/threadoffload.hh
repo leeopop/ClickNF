@@ -34,6 +34,10 @@ public:
     void push(int port, Packet *p);
 
 private:
+    pthread_t _worker_thread;
+    int _core_id;
+    struct rte_ring* job_queue;
+    void* worker();
 };
 
 CLICK_ENDDECLS
