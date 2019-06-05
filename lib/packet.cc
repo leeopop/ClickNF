@@ -1513,7 +1513,7 @@ Packet::static_initialize()
 	int t = rte_lcore_index(lcore_id);
 	mempool[t] = rte_mempool_create(
 	                (String("POOL_") + t).c_str(),           // name
-	                64 * 1024 - 1,                          // pool size
+	                128 * 1024 - 1,                          // pool size
 	                size,                                    // element size
 	                RTE_MEMPOOL_CACHE_MAX_SIZE,              // cache size
 	                sizeof(struct rte_pktmbuf_pool_private), // priv size
