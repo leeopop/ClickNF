@@ -69,7 +69,7 @@ void *ThreadOffload::worker()
             Packet* p = (Packet*)ptr;
             ThreadOffload::Annotation* anno = get_anno(p);
             rte_atomic16_exchange(&anno->state, 1);
-            rte_pktmbuf_free(p->mbuf());
+            rte_pktmbuf_release_ref2(p->mbuf());
         } 
         if (n == 0 && stop_signal == 1)
             goto break_loop;
@@ -99,7 +99,7 @@ Packet *ThreadOffload::simple_action(Packet *p)
 {
     DO_MICROBENCH_WITH_INTERVAL(500000);
     get_anno(p)->created_at = rte_rdtsc();
-    rte_mbuf_refcnt_update(p->mbuf(), 1);
+    rte_pktmbuf_acquire_ref2(p->mbuf());
     SET_TCP_HAS_OFFLOAD_ANNO(p, 1);
     while(rte_ring_sp_enqueue(job_queue, (void*)p) <0);
 

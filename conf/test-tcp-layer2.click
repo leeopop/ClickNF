@@ -89,8 +89,7 @@ elementclass TCPLayer {	__REST__ $rest |
 	// Received packets
 	input[0] 
 	-> TCPFlowLookup
-	//-> ThreadOffload(CORE 1)
-	//-> ThreadOffloadSync // sync offloaded result
+	-> ThreadOffload(CORE 1)
 	-> dmx :: TCPStateDemux;
 	   // CLOSED
 	   dmx[0] -> TCPClosed -> snd_rtr;
@@ -131,6 +130,7 @@ elementclass TCPLayer {	__REST__ $rest |
 	          -> proctxt :: TCPProcessTxt       // Process segment text
 	          -> procfin :: TCPProcessFin       // Process FIN flag
 	          -> congcon :: TCPNewRenoAck       // Update cong. control state
+			  -> ThreadOffloadSync // sync offloaded result
 	          -> TCPReplacePacket               // Kill old and allocate new pkt
 	          -> TCPRateControl                 // Control transmission rate and check if an ACK is needed
 	          -> snd_ack;
