@@ -165,6 +165,8 @@ CLICK_DECLS
  * packet copies its annotations.
  */
 
+const int Packet::AllAnnoSize = sizeof(Packet::AllAnno);
+
 /** @class WritablePacket
  * @brief A network packet believed not to be shared.
  *

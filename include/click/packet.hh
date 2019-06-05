@@ -412,6 +412,7 @@ class Packet { public:
 #endif
     /** @endcond never */
   public:
+    static const int AllAnnoSize;
 
     /** @name Annotations */
     //@{

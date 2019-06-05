@@ -14,12 +14,12 @@ public:
     }Annotation;
 
     static inline ThreadOffload::Annotation* get_anno(Packet* p) {
-        ThreadOffload::Annotation* ptr = (ThreadOffload::Annotation*)p->anno_u8(TCP_FLAGS_ANNO_OFFSET);
+        ThreadOffload::Annotation* ptr = (ThreadOffload::Annotation*)p->anno_u8(Packet::AllAnnoSize);
         return ptr;
     }
 
     static inline void set_anno(Packet* p, ThreadOffload::Annotation* source) {
-        ThreadOffload::Annotation* ptr = (ThreadOffload::Annotation*)p->anno_u8(TCP_FLAGS_ANNO_OFFSET);
+        ThreadOffload::Annotation* ptr = (ThreadOffload::Annotation*)p->anno_u8(Packet::AllAnnoSize);
         memcpy(ptr, source, sizeof(ThreadOffload::Annotation));
     }
 
