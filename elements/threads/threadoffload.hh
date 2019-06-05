@@ -10,6 +10,7 @@ class ThreadOffload : public Element
 public:
     typedef struct {
         rte_atomic16_t state;
+        uint64_t created_at;
     }Annotation;
 
     static inline ThreadOffload::Annotation* get_anno(Packet* p) {
