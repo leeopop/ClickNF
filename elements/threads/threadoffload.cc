@@ -69,9 +69,11 @@ void *ThreadOffload::worker()
         {
             void *ptr = burst[i];
             Packet* p = (Packet*)ptr;
-            uint64_t diff = rte_rdtsc() - get_anno(p)->created_at;
+            ThreadOffload::Annotation* anno = get_anno(p);
+            uint64_t diff = rte_rdtsc() - anno->created_at;
             total_diff += diff;
             sum_count += 1;
+            rte_atomic16_exchange(&anno->state, 1);
             rte_pktmbuf_free(p->mbuf());
         } 
         if (n == 0 && stop_signal == 1)
@@ -108,6 +110,7 @@ void ThreadOffload::push(int port, Packet *p)
     DO_MICROBENCH_WITH_INTERVAL(500000);
     get_anno(p)->created_at = rte_rdtsc();
     rte_mbuf_refcnt_update(p->mbuf(), 1);
+    SET_TCP_HAS_OFFLOAD_ANNO(p, 1);
     while(rte_ring_sp_enqueue(job_queue, (void*)p) <0);
 }
 

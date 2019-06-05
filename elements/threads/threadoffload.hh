@@ -9,7 +9,7 @@ class ThreadOffload : public Element
 {
 public:
     typedef struct {
-        rte_atomic16_t state;
+        volatile uint16_t state;
         uint64_t created_at;
     }Annotation;
 

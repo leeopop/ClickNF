@@ -77,6 +77,11 @@ CLICK_DECLS
 #define TCP_FLAGS_ANNO(p)        (p)->anno_u8(TCP_FLAGS_ANNO_OFFSET)
 #define SET_TCP_FLAGS_ANNO(p, v) (p)->set_anno_u8(TCP_FLAGS_ANNO_OFFSET, (v))
 
+#define TCP_HAS_OFFLOAD_ANNO_OFFSET    32 + DST_IP_ANNO_SIZE
+#define TCP_HAS_OFFLOAD_ANNO_SIZE       1
+#define TCP_HAS_OFFLOAD_ANNO(p)        (p)->anno_u8(TCP_FLAGS_ANNO_OFFSET)
+#define SET_TCP_HAS_OFFLOAD_ANNO(p, v) (p)->set_anno_u8(TCP_FLAGS_ANNO_OFFSET, (v))
+
 #define TCP_OFFLOAD_ANNO_SIZE       32
 
 #define TCP_FLAG_SACK      (1 << 0)  // SACKed packets
