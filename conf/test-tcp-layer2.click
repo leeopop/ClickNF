@@ -3,10 +3,6 @@ elementclass TCPLayer {	__REST__ $rest |
 	// General TCP info
 	TCPInfo($rest);
 
-	flow_lookup :: TCPFlowLookup;
-	offloading_module :: ThreadOffload(CORE 1);
-	flow_lookup[1] -> [0]offloading_module;
-
 	// Outgoing packets
 	tcp_out :: TCPSetMssAnno
 	        -> [0]output;  // To the network
@@ -92,7 +88,8 @@ elementclass TCPLayer {	__REST__ $rest |
 
 	// Received packets
 	input[0] 
-	-> flow_lookup
+	-> TCPFlowLookup
+	-> ThreadOffload(CORE 1)
 	-> dmx :: TCPStateDemux;
 	   // CLOSED
 	   dmx[0] -> TCPClosed -> snd_rtr;
@@ -133,7 +130,7 @@ elementclass TCPLayer {	__REST__ $rest |
 	          -> proctxt :: TCPProcessTxt       // Process segment text
 	          -> procfin :: TCPProcessFin       // Process FIN flag
 	          -> congcon :: TCPNewRenoAck       // Update cong. control state
-			  -> sync_offload :: ThreadOffloadSync // sync offloaded result
+			  -> ThreadOffloadSync // sync offloaded result
 	          -> TCPReplacePacket               // Kill old and allocate new pkt
 	          -> TCPRateControl                 // Control transmission rate and check if an ACK is needed
 	          -> snd_ack;
