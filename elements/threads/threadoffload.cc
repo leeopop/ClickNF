@@ -70,7 +70,7 @@ void *ThreadOffload::worker()
             void *ptr = burst[i];
             Packet* p = (Packet*)ptr;
             ThreadOffload::Annotation* anno = get_anno(p);
-            uint64_t diff = rte_rdtsc() - anno->created_at;
+            uint64_t diff = rte_rdtsc_precise() - anno->created_at;
             total_diff += diff;
             sum_count += 1;
             rte_atomic16_exchange(&anno->state, 1);
@@ -108,7 +108,7 @@ int ThreadOffload::configure(Vector<String> &conf, ErrorHandler *errh)
 Packet *ThreadOffload::simple_action(Packet *p)
 {
     DO_MICROBENCH_WITH_INTERVAL(500000);
-    get_anno(p)->created_at = rte_rdtsc();
+    get_anno(p)->created_at = rte_rdtsc_precise();
     rte_mbuf_refcnt_update(p->mbuf(), 1);
     SET_TCP_HAS_OFFLOAD_ANNO(p, 1);
     while(rte_ring_sp_enqueue(job_queue, (void*)p) <0);
