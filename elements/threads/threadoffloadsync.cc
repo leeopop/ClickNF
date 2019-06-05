@@ -41,10 +41,9 @@ int ThreadOffloadSync::configure(Vector<String> &conf, ErrorHandler *errh)
 
 Packet* ThreadOffloadSync::simple_action(Packet *p)
 {
-    DO_MICROBENCH_WITH_INTERVAL(100000);
     ThreadOffload::Annotation* anno = ThreadOffload::get_anno(p);
     if(TCP_HAS_OFFLOAD_ANNO(p) == 1) {
-        DO_MICROBENCH_WITH_INTERVAL(100000);
+        DO_MICROBENCH_WITH_INTERVAL(500000);
         while(anno->state == 0);
     }
     return p;
