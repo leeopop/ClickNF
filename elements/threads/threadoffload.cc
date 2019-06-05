@@ -27,6 +27,7 @@ CLICK_DECLS
 
 ThreadOffload::ThreadOffload()
 {
+    assert(sizeof(ThreadOffload::Annotation) <= TCP_OFFLOAD_ANNO_SIZE);
     job_queue = 0;
 }
 
@@ -70,7 +71,6 @@ break_loop:
 
 int ThreadOffload::configure(Vector<String> &conf, ErrorHandler *errh)
 {
-    assert(sizeof(ThreadOffload::Annotation) <= TCP_OFFLOAD_ANNO_SIZE);
     if (Args(conf, this, errh)
             .read_p("CORE", _core_id)
             //.read_p("INCREASING", _increasing)

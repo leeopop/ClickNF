@@ -3,6 +3,8 @@ elementclass TCPLayer {	__REST__ $rest |
 	// General TCP info
 	TCPInfo($rest);
 
+	offloading_module :: ThreadOffload(CORE 1);
+
 	// Outgoing packets
 	tcp_out :: TCPSetMssAnno
 	        -> [0]output;  // To the network
