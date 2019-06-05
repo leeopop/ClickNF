@@ -1230,8 +1230,6 @@ static inline void rte_pktmbuf_reset_headroom(struct rte_mbuf *m)
 
 static inline void rte_pktmbuf_reset(struct rte_mbuf *m)
 {
-	while(rte_atomic16_read(&m->refcnt2_atomic) != 0);
-
 	m->next = NULL;
 	m->pkt_len = 0;
 	m->tx_offload = 0;
