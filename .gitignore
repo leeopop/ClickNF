@@ -5,6 +5,8 @@
 **/*config.mk
 *.status
 Makefile
+!dpdk/**/Makefile
+!dpdk/**/*config.mk
 installch
 stamp-h
 *.log
