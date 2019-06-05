@@ -3,7 +3,9 @@ elementclass TCPLayer {	__REST__ $rest |
 	// General TCP info
 	TCPInfo($rest);
 
+	flow_lookup :: TCPFlowLookup;
 	offloading_module :: ThreadOffload(CORE 1);
+	flow_lookup[1] -> [0]offloading_module;
 
 	// Outgoing packets
 	tcp_out :: TCPSetMssAnno
@@ -90,7 +92,7 @@ elementclass TCPLayer {	__REST__ $rest |
 
 	// Received packets
 	input[0] 
-	-> TCPFlowLookup
+	-> flow_lookup
 	-> dmx :: TCPStateDemux;
 	   // CLOSED
 	   dmx[0] -> TCPClosed -> snd_rtr;
