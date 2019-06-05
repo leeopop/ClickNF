@@ -43,6 +43,7 @@ Packet* ThreadOffloadSync::simple_action(Packet *p)
 {
     ThreadOffload::Annotation* anno = ThreadOffload::get_anno(p);
     if(TCP_HAS_OFFLOAD_ANNO(p) == 1) {
+        DO_MICROBENCH_WITH_INTERVAL(100000);
         while(anno->state == 0);
     }
     return p;
