@@ -46,8 +46,10 @@ Packet* ThreadOffloadSync::simple_action(Packet *p)
         DO_MICROBENCH_WITH_INTERVAL(500000);
         rte_compiler_barrier();
         while(anno->state == 0);
-        rte_mb();
-        total_diff += rte_rdtsc() - anno->created_at;
+        rte_compiler_barrier();
+        auto read_val = rte_rdtsc();
+        rte_compiler_barrier();
+        total_diff += read_val - anno->created_at;
         sum_count += 1;
         if (sum_count == 500000) {
             printf("average offloading time: %lf\n", (double)total_diff / (double)sum_count);
