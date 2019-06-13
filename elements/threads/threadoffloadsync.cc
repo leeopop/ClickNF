@@ -44,12 +44,10 @@ Packet* ThreadOffloadSync::simple_action(Packet *p)
     ThreadOffload::Annotation* anno = ThreadOffload::get_anno(p);
     if(TCP_HAS_OFFLOAD_ANNO(p) == 1) {
         DO_MICROBENCH_WITH_INTERVAL(500000);
-        rte_compiler_barrier();
+        rte_rmb();
         while(anno->state == 0);
         rte_rmb();
-        auto read_val = rte_rdtsc();
-        rte_compiler_barrier();
-        total_diff += read_val - anno->created_at;
+        total_diff += rte_rdtsc() - anno->created_at;
         sum_count += 1;
         if (sum_count == 500000) {
             printf("average offloading time: %lf\n", (double)total_diff / (double)sum_count);
