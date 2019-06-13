@@ -89,7 +89,7 @@ elementclass TCPLayer {	__REST__ $rest |
 	// Received packets
 	input[0] 
 	-> TCPFlowLookup
-	-> ThreadOffload(CORE 1)
+	-> ThreadOffload(CORE 24)
 	-> ThreadOffloadSync // sync offloaded result
 	-> dmx :: TCPStateDemux;
 	   // CLOSED
