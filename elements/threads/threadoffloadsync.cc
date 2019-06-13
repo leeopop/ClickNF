@@ -46,7 +46,7 @@ Packet* ThreadOffloadSync::simple_action(Packet *p)
         DO_MICROBENCH_WITH_INTERVAL(500000);
         rte_compiler_barrier();
         while(anno->state == 0);
-        rte_compiler_barrier();
+        rte_rmb();
         auto read_val = rte_rdtsc();
         rte_compiler_barrier();
         total_diff += read_val - anno->created_at;
