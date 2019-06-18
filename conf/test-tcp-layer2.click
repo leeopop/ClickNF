@@ -138,11 +138,11 @@ elementclass TCPLayer {	__REST__ $rest |
 	          -> snd_ack;
 
 	             optpars[1] -> TCPReplacePacket -> snd_ack;
-	             ckseqno[1] -> TCPReplacePacket -> snd_ack;
+	             //ckseqno[1] -> TCPReplacePacket -> snd_ack;
 	             procsyn[1] -> TCPReplacePacket -> snd_rst;
 	             procack[1] -> TCPReplacePacket -> snd_ack;
 	             procack[2] -> TCPReplacePacket -> snd_rst;
 	             procack[3] -> snd_rtr;
 	             reorder[1] -> snd_ack;
-	             congcon[1] -> snd_rtx;
+	             //congcon[1] -> snd_rtx;
 }
