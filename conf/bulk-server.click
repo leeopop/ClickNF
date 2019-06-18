@@ -13,7 +13,7 @@ dpdk0 :: DPDK($DEV0, BURST 32, TX_RING_SIZE 512, RX_RING_SIZE 512, TX_IP_CHECKSU
 
 arpr :: ARPResponder($DEV0);
 arpq :: ARPQuerier($DEV0, SHAREDPKT true);
-//arps :: FixedArp(3c:fd:fe:9e:5c:88, 3c:fd:fe:a4:d5:c8);
+arps :: FixedArp(3c:fd:fe:9e:5c:88, 3c:fd:fe:a4:d5:c8);
 
 arpq[0] -> dpdk0;
 arpq[1] -> dpdk0;
@@ -21,7 +21,7 @@ arpq[1] -> dpdk0;
 
 tcp_layer[0]
   -> GetIPAddress(16)  // This only works with nodes in the same network
-  -> [0]arpq;
+  -> arps-> [0]arpq;
   //-> [0]arps;
 
 dpdk0
