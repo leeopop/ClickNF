@@ -120,18 +120,18 @@ elementclass TCPLayer {	__REST__ $rest |
 	             synsent[2] -> snd_rtr;                      // Send RST
 
 	   // Other states
-	   dmx[3] -> ThreadOffload(CORE 1)
+	   dmx[3] //-> ThreadOffload(CORE 1)
 	          -> optpars :: TCPAckOptionsParse  // Parse TCP options
-	          -> estirtt :: TCPEstimateRTT      // Update RTT measurements
-	          -> ckseqno :: TCPCheckSeqNo       // Ensure data is in window
-	          -> trimpkt :: TCPTrimPacket       // Trim out-of-window data
+	          //-> estirtt :: TCPEstimateRTT      // Update RTT measurements
+	          //-> ckseqno :: TCPCheckSeqNo       // Ensure data is in window
+	          //-> trimpkt :: TCPTrimPacket       // Trim out-of-window data
 	          -> reorder :: TCPReordering       // Ensure in-order delivery
-	          -> procrst :: TCPProcessRst       // Process RST flag
+	          //-> procrst :: TCPProcessRst       // Process RST flag
 	          -> procsyn :: TCPProcessSyn       // Process SYN flag
 	          -> procack :: TCPProcessAck       // Process ACK flag
 	          -> proctxt :: TCPProcessTxt       // Process segment text
 	          -> procfin :: TCPProcessFin       // Process FIN flag
-	          -> congcon :: TCPNewRenoAck       // Update cong. control state
+	          //-> congcon :: TCPNewRenoAck       // Update cong. control state
 			  // -> ThreadOffloadSync // sync offloaded result
 	          -> TCPReplacePacket               // Kill old and allocate new pkt
 	          -> TCPRateControl                 // Control transmission rate and check if an ACK is needed
