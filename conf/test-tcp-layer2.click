@@ -120,7 +120,8 @@ elementclass TCPLayer {	__REST__ $rest |
 	             synsent[2] -> snd_rtr;                      // Send RST
 
 	   // Other states
-	   dmx[3] -> optpars :: TCPAckOptionsParse  // Parse TCP options
+	   dmx[3] -> ThreadOffload(CORE 1)
+	          -> optpars :: TCPAckOptionsParse  // Parse TCP options
 	          -> estirtt :: TCPEstimateRTT      // Update RTT measurements
 	          -> ckseqno :: TCPCheckSeqNo       // Ensure data is in window
 	          -> trimpkt :: TCPTrimPacket       // Trim out-of-window data
