@@ -25,16 +25,6 @@ tcp_layer[0]
   //-> [0]arpq;
   -> [0]arps;
 
-//arpq[0] -> dpdk0;
-//arpq[1] -> dpdk0;
-arps[0] -> dpdk0;
-
-
-tcp_layer[0]
-  -> GetIPAddress(16)  // This only works with nodes in the same network
-  //-> [0]arpq;
-  -> [0]arps;
-
 dpdk0
   -> HostEtherFilter($DEV0)
   -> class :: FastClassifier(12/0806 20/0001, // ARP query
