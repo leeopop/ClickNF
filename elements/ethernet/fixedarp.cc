@@ -29,6 +29,10 @@ int FixedArp::configure(Vector<String> &conf, ErrorHandler *errh)
 		errh->error("expected SRC DST");
 		return -1;
 	}
+	printf("conf len %d\n", conf.size());
+	for (auto x: conf) {
+		printf("conf %s\n", x.c_str());
+	}
 	if (EtherAddressArg().parse(conf[0], src, context))
 		return -1;
 
@@ -41,9 +45,9 @@ Packet *FixedArp::simple_action(Packet *p)
 {
 	// make room for Ethernet header.
 	assert(!p->shared());
-	WritablePacket *q;
-	q = p->uniqueify();
-	q = p->push_mac_header(sizeof(click_ether));
+	WritablePacket *q = (WritablePacket *) p;
+	q = (WritablePacket *) p->nonunique_push(sizeof(click_ether));
+	q->set_mac_header(q->data());
 	q->ether_header()->ether_type = htons(ETHERTYPE_IP);
 
 	EtherAddress *dst_eth = reinterpret_cast<EtherAddress *>(q->ether_header()->ether_dhost);
