@@ -33,10 +33,10 @@ int FixedArp::configure(Vector<String> &conf, ErrorHandler *errh)
 	for (auto x: conf) {
 		printf("conf %s\n", x.c_str());
 	}
-	if (EtherAddressArg().parse(conf[0], src, context))
+	if (EtherAddressArg().parse(conf[0], src))
 		return -1;
 
-	if (EtherAddressArg().parse(conf[1], dst, context))
+	if (EtherAddressArg().parse(conf[1], dst))
 		return -1;
 	return 0;
 }
