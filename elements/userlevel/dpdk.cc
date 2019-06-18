@@ -1026,7 +1026,6 @@ DPDK::rx_batch()
                         char *c = (char *)(rx_mbuf[i+1] + 1);
                         rte_prefetch0(c);
                         rte_prefetch0(c + CLICK_CACHE_LINE_SIZE);
-						rte_prefetch0(c + CLICK_CACHE_LINE_SIZE*2);
                         rte_prefetch0(rte_pktmbuf_mtod(rx_mbuf[i+1], void *));
                 }
 # endif
