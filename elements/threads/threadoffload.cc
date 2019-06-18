@@ -66,15 +66,15 @@ void *ThreadOffload::worker()
         for (int i = 0; i < n; ++i)
         {
             void *ptr = burst[i];
-            Packet* p = (Packet*)ptr;
-            ThreadOffload::Annotation* anno = get_anno(p);
+            Packet *p = (Packet *)ptr;
+            ThreadOffload::Annotation *anno = get_anno(p);
             rte_atomic16_exchange(&anno->state, 1);
             rte_wmb();
             rte_pktmbuf_release_ref2(p->mbuf());
-        } 
+        }
         if (n == 0)
         {
-            if ( stop_signal == 1)
+            if (stop_signal == 1)
                 goto break_loop;
             rte_pause();
         }
@@ -94,7 +94,7 @@ int ThreadOffload::configure(Vector<String> &conf, ErrorHandler *errh)
     int socket_id = rte_lcore_to_socket_id(_core_id);
     job_queue = rte_ring_create("threadoffload_jq", 8192, socket_id, RING_F_SC_DEQ | RING_F_SP_ENQ);
     rte_mb();
-    int ret = pthread_create(&_worker_thread, NULL, (void *(*)(void *))&ThreadOffload::worker, this);
+    int ret = pthread_create(&_worker_thread, NULL, (void *(*)(void *)) & ThreadOffload::worker, this);
     assert(ret == 0);
 
     return 0;
@@ -107,7 +107,7 @@ Packet *ThreadOffload::simple_action(Packet *p)
     rte_pktmbuf_acquire_ref2(p->mbuf());
     SET_TCP_HAS_OFFLOAD_ANNO(p, 1);
     rte_wmb();
-    while(rte_ring_sp_enqueue(job_queue, (void*)p) <0)
+    while (rte_ring_sp_enqueue(job_queue, (void *)p) < 0)
         rte_pause();
     return p;
 }

@@ -42,11 +42,10 @@ int ThreadOffloadSync::configure(Vector<String> &conf, ErrorHandler *errh)
 Packet* ThreadOffloadSync::simple_action(Packet *p)
 {
     ThreadOffload::Annotation* anno = ThreadOffload::get_anno(p);
+    rte_rmb();
     if(TCP_HAS_OFFLOAD_ANNO(p) == 1) {
         DO_MICROBENCH_WITH_INTERVAL(500000);
-        rte_rmb();
         while(anno->state == 0);
-        rte_rmb();
         total_diff += rte_rdtsc() - anno->created_at;
         sum_count += 1;
         if (sum_count == 500000) {
