@@ -32,8 +32,7 @@ dpdk0
      class[0] -> [0]arpr -> dpdk0;
      //class[1] -> [1]arpq;
      class[1] -> Discard;
-     class[2] //-> ThreadOffload(CORE 1)
-              -> Strip(14)
+     class[2] -> Strip(14)
               -> CheckIPHeader(CHECKSUM false)
               -> IPClassifier(tcp dst host $ADDR0)
               -> CheckTCPHeader(CHECKSUM false)
