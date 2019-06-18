@@ -123,7 +123,7 @@ elementclass TCPLayer {	__REST__ $rest |
 	   dmx[3] //-> ThreadOffload(CORE 1)
 	          -> optpars :: TCPAckOptionsParse  // Parse TCP options
 	          //-> estirtt :: TCPEstimateRTT      // Update RTT measurements
-	          //-> ckseqno :: TCPCheckSeqNo       // Ensure data is in window
+	          -> ckseqno :: TCPCheckSeqNo       // Ensure data is in window
 	          //-> trimpkt :: TCPTrimPacket       // Trim out-of-window data
 	          -> reorder :: TCPReordering       // Ensure in-order delivery
 	          //-> procrst :: TCPProcessRst       // Process RST flag
@@ -131,18 +131,18 @@ elementclass TCPLayer {	__REST__ $rest |
 	          -> procack :: TCPProcessAck       // Process ACK flag
 	          -> proctxt :: TCPProcessTxt       // Process segment text
 	          -> procfin :: TCPProcessFin       // Process FIN flag
-	          //-> congcon :: TCPNewRenoAck       // Update cong. control state
+	          -> congcon :: TCPNewRenoAck       // Update cong. control state
 			  // -> ThreadOffloadSync // sync offloaded result
 	          -> TCPReplacePacket               // Kill old and allocate new pkt
 	          -> TCPRateControl                 // Control transmission rate and check if an ACK is needed
 	          -> snd_ack;
 
 	             optpars[1] -> TCPReplacePacket -> snd_ack;
-	             //ckseqno[1] -> TCPReplacePacket -> snd_ack;
+	             ckseqno[1] -> TCPReplacePacket -> snd_ack;
 	             procsyn[1] -> TCPReplacePacket -> snd_rst;
 	             procack[1] -> TCPReplacePacket -> snd_ack;
 	             procack[2] -> TCPReplacePacket -> snd_rst;
 	             procack[3] -> snd_rtr;
 	             reorder[1] -> snd_ack;
-	             //congcon[1] -> snd_rtx;
+	             congcon[1] -> snd_rtx;
 }
