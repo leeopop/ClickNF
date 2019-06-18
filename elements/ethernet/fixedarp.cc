@@ -44,7 +44,6 @@ int FixedArp::configure(Vector<String> &conf, ErrorHandler *errh)
 Packet *FixedArp::simple_action(Packet *p)
 {
 	// make room for Ethernet header.
-	assert(!p->shared());
 	WritablePacket *q = (WritablePacket *) p;
 	q = (WritablePacket *) p->nonunique_push(sizeof(click_ether));
 	q->set_mac_header(q->data());
