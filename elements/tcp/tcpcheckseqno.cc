@@ -57,19 +57,26 @@ TCPCheckSeqNo::smaction(Packet *p)
 	uint32_t seq = TCP_SEQ(th);
 	uint32_t sns = TCP_SNS(ip, th);
 
+	DO_PATH_BENCH_WITH_NAME("TCPCheckSeqNo");
+
 	if (unlikely(!s->is_acceptable_seq(seq, sns))) {
 		if (TCP_RST(th)) {
+			MEASURE_PATH("TCPCheckSeqNo::TCP_RST");
 			p->kill();
 		}
 		else if (TCP_SYN(th) && s->state == TCP_SYN_RECV) {
+			MEASURE_PATH("TCPCheckSeqNo::TCP_SYN_RECV");
 			s->rtx_timer.schedule_now();
 			p->kill();
 		}
-		else
+		else {
+			MEASURE_PATH("TCPCheckSeqNo::Else");
 			output(1).push(p);
+		}
 
 		return NULL;
 	}
+	MEASURE_PATH("TCPCheckSeqNo::Normal");
 
 	return p;
 }

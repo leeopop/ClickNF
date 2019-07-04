@@ -4,6 +4,11 @@
 
 #ifdef __cplusplus
 
+#define ENABLE_PATH_BENCH
+#ifdef ENABLE_PATH_BENCH
+#include <R/pathbench.hpp>
+#endif
+
 #undef ENABLE_MICROBENCH
 #ifdef ENABLE_MICROBENCH
 #define CUSTOM_PRINT_INTERVAL 10000
