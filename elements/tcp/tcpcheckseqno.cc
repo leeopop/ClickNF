@@ -55,7 +55,10 @@ TCPCheckSeqNo::smaction(Packet *p)
 	uint32_t seq = TCP_SEQ(th);
 	uint32_t sns = TCP_SNS(ip, th);
 
+	DO_PATH_BENCH_WITH_NAME_INTERVAL("TCPCheckSeqNo", 100000);
+
 	if (unlikely(!s->is_acceptable_seq(seq, sns))) {
+		MEASURE_PATH_WITH_NAME("Non-acceptable seq");
 		if (TCP_RST(th)) {
 			p->kill();
 		}
@@ -68,6 +71,7 @@ TCPCheckSeqNo::smaction(Packet *p)
 
 		return NULL;
 	}
+	MEASURE_PATH_WITH_NAME("Acceptable seq, fastpath");
 
 	return p;
 }
