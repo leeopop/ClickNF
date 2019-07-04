@@ -1,0 +1,13 @@
+.vscode/
+
+autom4te.cache/
+Makefile
+bin/
+config.log
+config.status
+configure
+installch
+share/click/config.mk
+share/click/pkg-config.mk
+stamp-h
+
