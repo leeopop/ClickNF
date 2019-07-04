@@ -45,6 +45,8 @@ TCPReordering::push(int, Packet *p)
 	const click_tcp *th = p->tcp_header();
 	click_assert(s && th);
 
+	DO_PATH_BENCH_WITH_NAME_INTERVAL("TCPReordering", 500000);
+
 	// RFC 793:
 	// "In the following it is assumed that the segment is the idealized
 	//  segment that begins at RCV.NXT and does not exceed the window.
@@ -54,11 +56,14 @@ TCPReordering::push(int, Packet *p)
 	//  begins at RCV.NXT.  Segments with higher begining sequence
 	//  numbers may be held for later processing."
 	if (likely(TCP_SEQ(th) == s->rcv_nxt && s->rxb.empty())) {
+		MEASURE_PATH_WITH_NAME("Already sorted seq, fastpath");
 		RESET_TCP_MS_FLAG_ANNO(p);
 		RESET_TCP_ACK_FLAG_ANNO(p);
 		output(0).push(p);
 		return;
 	}
+
+	MEASURE_PATH_WITH_NAME("Otherwise");
 
 	// Reset state annotation as the lock is not held while in the buffer
 	SET_TCP_STATE_ANNO(p, 0);
