@@ -61,22 +61,22 @@ TCPCheckSeqNo::smaction(Packet *p)
 
 	if (unlikely(!s->is_acceptable_seq(seq, sns))) {
 		if (TCP_RST(th)) {
-			MEASURE_PATH("TCPCheckSeqNo::TCP_RST");
+			MEASURE_PATH_WITH_NAME("TCPCheckSeqNo::TCP_RST");
 			p->kill();
 		}
 		else if (TCP_SYN(th) && s->state == TCP_SYN_RECV) {
-			MEASURE_PATH("TCPCheckSeqNo::TCP_SYN_RECV");
+			MEASURE_PATH_WITH_NAME("TCPCheckSeqNo::TCP_SYN_RECV");
 			s->rtx_timer.schedule_now();
 			p->kill();
 		}
 		else {
-			MEASURE_PATH("TCPCheckSeqNo::Else");
+			MEASURE_PATH_WITH_NAME("TCPCheckSeqNo::Else");
 			output(1).push(p);
 		}
 
 		return NULL;
 	}
-	MEASURE_PATH("TCPCheckSeqNo::Normal");
+	MEASURE_PATH_WITH_NAME("TCPCheckSeqNo::Normal");
 
 	return p;
 }
